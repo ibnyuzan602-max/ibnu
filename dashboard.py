@@ -224,7 +224,7 @@ elif st.session_state.page == "dashboard":
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # 1. DEFINISI NAMA KELAS KLASIFIKASI (Keras)
+    # DEFINISI NAMA KELAS KLASIFIKASI (Keras)
     # Mapping: 0 = Kucing, 1 = Anjing, 2 = Manusia
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
 
@@ -234,7 +234,7 @@ elif st.session_state.page == "dashboard":
             yolo_model = YOLO(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 4.pt"))
             classifier = tf.keras.models.load_model(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 2.h5"))
             
-            # 2. AMBIL NAMA KELAS YOLO DARI MODEL
+            # AMBIL NAMA KELAS YOLO SECARA DINAMIS DARI MODEL
             yolo_names = yolo_model.names 
             
             return yolo_model, classifier, yolo_names
@@ -264,7 +264,7 @@ elif st.session_state.page == "dashboard":
             result_img = results[0].plot()
             st.image(result_img, caption="🎯 Hasil Deteksi", use_column_width=True)
             
-            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL
+            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (Hanya Nama Objek)
             detection_counts = {}
             
             if results and len(results[0].boxes) > 0:
@@ -272,7 +272,7 @@ elif st.session_state.page == "dashboard":
                     class_id = int(box.cls[0])
                     
                     # Menggunakan nama kelas yang diambil dari model
-                    class_name = YOLO_CLASS_NAMES.get(class_id, f"Kelas Tidak Dikenal (ID: {class_id})")
+                    class_name = YOLO_CLASS_NAMES.get(class_id, f"Kelas Tidak Dikenal") 
                     
                     if class_name in detection_counts:
                         detection_counts[class_name] += 1
@@ -317,6 +317,7 @@ elif st.session_state.page == "dashboard":
             try:
                 predicted_class_name = CLASS_NAMES[class_index]
             except IndexError:
+                # Jika indeks kelas di luar batas yang diharapkan
                 predicted_class_name = f"Kelas Tidak Dikenal (Indeks: {class_index})"
                 
             st.markdown(f"""
