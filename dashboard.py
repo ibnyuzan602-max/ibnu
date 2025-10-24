@@ -64,6 +64,7 @@ h1, h2, h3 {
     margin-top: 15px;
     text-align: left;
     border: 1px solid #555;
+    color: #f0f0f0; /* Memastikan teks di dalam summary terlihat */
 }
 .warning-box {
     background-color: rgba(255, 193, 7, 0.1);
@@ -229,19 +230,20 @@ elif st.session_state.page == "dashboard":
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # DAFTAR NAMA KELAS UNTUK KLASIFIKASI (Keras)
+    # =======================================================
+    # DEFINISI NAMA KELAS
+    # =======================================================
+    # 1. Klasifikasi Gambar (Keras)
+    # 0 = Kucing, 1 = Anjing, 2 = Manusia
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
     
-    # DAFTAR NAMA KELAS UNTUK DETEKSI OBJEK (YOLO)
-    # Anda harus tahu mapping indeks kelas model YOLO Anda. 
-    # Jika model Anda adalah custom, ini harus dicocokkan dengan file data.yaml model Anda.
-    # Contoh di bawah menggunakan 3 kelas yang sama sebagai ilustrasi, 
-    # tapi biasanya model YOLO memiliki banyak kelas (misal: COCO dataset memiliki 80 kelas).
+    # 2. Deteksi Objek (YOLO)
+    # MAPPING: ID Kelas -> Nama Objek
     YOLO_CLASS_NAMES = {
         0: "Kucing 🐈", 
         1: "Anjing 🐕", 
         2: "Manusia 👤"
-        # Tambahkan kelas lain jika model YOLO Anda mendeteksi lebih banyak objek
+        # PASTIKAN ID KELAS YOLO SUDAH BENAR SESUAI MODEL .pt ANDA
     }
 
 
@@ -274,16 +276,14 @@ elif st.session_state.page == "dashboard":
             result_img = results[0].plot()
             st.image(result_img, caption="🎯 Hasil Deteksi", use_column_width=True)
             
-            # =======================================================
-            # PERUBAHAN: MENGHITUNG DAN MENAMPILKAN RINGKASAN DETEKSI
-            # =======================================================
+            # MENGHITUNG DAN MENAMPILKAN RINGKASAN DETEKSI
             detection_counts = {}
             
-            # Cek jika ada deteksi
             if results and len(results[0].boxes) > 0:
                 # Iterasi melalui kotak deteksi
                 for box in results[0].boxes:
                     class_id = int(box.cls[0])
+                    # Mengambil nama dari mapping YOLO_CLASS_NAMES
                     class_name = YOLO_CLASS_NAMES.get(class_id, f"Kelas Tidak Dikenal (ID: {class_id})")
                     
                     if class_name in detection_counts:
@@ -291,7 +291,7 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[class_name] = 1
                 
-                # Buat string ringkasan
+                # Membuat ringkasan HTML
                 summary_list = []
                 for name, count in detection_counts.items():
                     summary_list.append(f"<li>**{name}**: {count} objek</li>")
@@ -325,7 +325,7 @@ elif st.session_state.page == "dashboard":
             class_index = np.argmax(prediction)
             confidence = np.max(prediction)
             
-            # Mendapatkan nama kelas dari indeks
+            # MENDAPATKAN NAMA KELAS DARI INDEKS (0=Kucing, 1=Anjing, 2=Manusia)
             try:
                 predicted_class_name = CLASS_NAMES[class_index]
             except IndexError:
