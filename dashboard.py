@@ -15,6 +15,7 @@ import re
 
 # =========================
 # KONFIGURASI DASAR
+# (TIDAK BERUBAH)
 # =========================
 st.set_page_config(
     page_title="AI Vision Pro",
@@ -24,7 +25,8 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (FIX TEKS PUTIH DAN STARFIELD PERMANEN)
+# CSS DARK FUTURISTIK 
+# (SEMUA PERBAIKAN FILE UPLOADER HITAM TETAP DI SINI)
 # =========================
 st.markdown("""
 <style>
@@ -97,7 +99,7 @@ h1, h2, h3 {
 }
 
 
-/* 🔥 FIX BARU: Teks pada st.file_uploader menjadi Abu-abu Gelap agar JELAS */
+/* 🔥 FIX BARU: Teks pada st.file_uploader menjadi HITAM PEKAT (#000000) */
 
 /* Pastikan area dropzone itu sendiri Putih Murni */
 [data-testid="stFileUploaderDropzone"] {
@@ -106,14 +108,14 @@ h1, h2, h3 {
 }
 
 [data-testid="stFileUploader"] > div > div > div > div > p { /* Menargetkan "Drag and drop file here" */
-    color: #333333 !important; /* Abu-abu Gelap */
+    color: #000000 !important; /* HITAM PEKAT */
 }
 [data-testid="stFileUploader"] > div > div > div > div > small { /* Menargetkan "Limit 200MB..." */
-    color: #555555 !important; /* Abu-abu Sedang */
+    color: #000000 !important; /* HITAM PEKAT */
 }
-/* Menargetkan ikon upload menjadi Abu-abu Gelap */
+/* Menargetkan ikon upload menjadi HITAM PEKAT */
 [data-testid="stFileUploader"] svg {
-    fill: #333333 !important; /* Abu-abu Gelap */
+    fill: #000000 !important; /* HITAM PEKAT */
 }
 
 
@@ -252,7 +254,7 @@ div[role="option"][aria-selected="true"] {
 """, unsafe_allow_html=True)
 
 # =========================
-# FUNGSI LOAD LOTTIE
+# FUNGSI DAN LOGIKA UTAMA
 # =========================
 def load_lottie_url(url):
     try:
@@ -263,30 +265,17 @@ def load_lottie_url(url):
         return None
     return None
 
-# =========================
-# ANIMASI LOTTIE
-# =========================
 LOTTIE_WELCOME = "https://assets10.lottiefiles.com/packages/lf20_pwohahvd.json"
 LOTTIE_DASHBOARD = "https://assets10.lottiefiles.com/packages/lf20_t24tpvcu.json"
 LOTTIE_TRANSITION = "https://assets2.lottiefiles.com/packages/lf20_touohxv0.json"
 
-# =========================
-# SISTEM HALAMAN
-# =========================
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
-# --- HALAMAN UTAMA ---
-
-# =========================
-# HALAMAN 1: WELCOME
-# =========================
 if st.session_state.page == "home":
-    # Tulisan di sini dipastikan putih terang oleh CSS
     st.markdown("<h1 style='text-align:center;'>🤖 Selamat Datang di AI Vision Pro</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;'>Sistem Cerdas untuk Deteksi Objek dan Klasifikasi Gambar</p>", unsafe_allow_html=True)
     
-    # Konten Lottie sekarang transparan
     lottie = load_lottie_url(LOTTIE_WELCOME)
     if lottie:
         st.markdown("<div class='lottie-center'>", unsafe_allow_html=True)
@@ -304,16 +293,13 @@ if st.session_state.page == "home":
                 time.sleep(1.5)
             st.rerun()
 
-# =========================
-# HALAMAN 2: DASHBOARD
-# =========================
 elif st.session_state.page == "dashboard":
-    # Tulisan di sini dipastikan putih terang oleh CSS
     st.title("🤖 AI Vision Pro Dashboard")
     st.markdown("### Sistem Deteksi dan Klasifikasi Gambar Cerdas")
 
     # =========================
     # SISTEM MUSIK (DI DALAM SIDEBAR)
+    # (TIDAK BERUBAH)
     # =========================
     music_folder = "music"
 
@@ -328,7 +314,6 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
-            # Label "Pilih Lagu:" dipertahankan (warna putih oleh CSS)
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:", 
@@ -351,7 +336,6 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
-                # Pemutar audio bawaan Streamlit
                 st.sidebar.audio(
                     audio_bytes,
                     format='audio/mp3',
@@ -369,6 +353,7 @@ elif st.session_state.page == "dashboard":
 
     # =========================
     # KONTROL MODE AI (DI DALAM SIDEBAR)
+    # (TIDAK BERUBAH)
     # =========================
     st.sidebar.header("🧠 Mode AI")
     mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
@@ -376,10 +361,7 @@ elif st.session_state.page == "dashboard":
     st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
-    # =========================
-
     
-    # DEFINISI NAMA KELAS KLASIFIKASI (Keras)
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
 
     @st.cache_resource
@@ -395,16 +377,13 @@ elif st.session_state.page == "dashboard":
             st.warning(f"⚠ Gagal memuat model. Pastikan file model ada di folder 'model/'. Error: {e}")
             return None, None, {}
 
-    # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
-    # Label "Unggah Gambar" di luar kotak uploader ini tetap putih
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
-        # PERBAIKAN: Konversi eksplisit ke RGB
         try:
             if img.mode != 'RGB':
                 img = img.convert('RGB')
@@ -433,7 +412,6 @@ elif st.session_state.page == "dashboard":
                     class_id = int(box.cls[0])
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # Membersihkan nama kelas
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -443,8 +421,10 @@ elif st.session_state.page == "dashboard":
                         detection_counts[final_class_name] = 1
                 
                 summary_list = []
+                # 🔥 PERBAIKAN DI SINI: Hanya tambahkan nama objek tanpa hitungan atau tanda bintang
                 for name, count in detection_counts.items():
-                    summary_list.append(f"- **{name}** ({count} objek)") 
+                    # Menghilangkan tanda bintang, kurung, dan angka
+                    summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
                 <div class="detection-summary">
@@ -496,7 +476,6 @@ elif st.session_state.page == "dashboard":
     else:
         st.markdown("<div class='warning-box'>📂 Silakan unggah gambar terlebih dahulu.</div>", unsafe_allow_html=True)
 
-    # 🔹 TOMBOL KEMBALI (DI DALAM SIDEBAR)
     if st.sidebar.button("⬅ Kembali ke Halaman Awal", key="back_to_home_fixed", use_container_width=True):
         st.session_state.page = "home"
         st.rerun()
