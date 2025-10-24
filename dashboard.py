@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX KETERBACAAN TEKS UPLOAD)
+# CSS DARK FUTURISTIK (DITAMBAH FIX KETERBACAAN TOMBOL BROWSE)
 # =========================
 st.markdown("""
 <style>
@@ -78,12 +78,26 @@ h1, h2, h3 {
     margin: 15px auto;
 }
 
-/* 🔥 PERBAIKAN: Target label st.file_uploader agar teks terlihat jelas */
+/* FIX 1: Target label st.file_uploader (sudah diperbaiki sebelumnya) */
 [data-testid="stFileUploader"] label p {
-    color: #f0f0f0 !important; /* Warna putih cerah */
-    font-size: 1.1em; /* Sedikit lebih besar */
+    color: #f0f0f0 !important; 
+    font-size: 1.1em; 
 }
 
+/* 🔥 FIX 2: Target Tombol "Browse Files" di dalam st.file_uploader */
+[data-testid="stFileUploader"] button {
+    background-color: #334466; /* Biru tua kontras */
+    color: white !important;
+    border: 1px solid #556688;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: none;
+    transition: all 0.2s;
+}
+
+[data-testid="stFileUploader"] button:hover {
+    background-color: #445577; /* Warna hover */
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -243,7 +257,7 @@ elif st.session_state.page == "dashboard":
     # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
-    # Perhatikan: Label 'Unggah Gambar...' seharusnya sudah terlihat jelas sekarang karena CSS di atas.
+    # st.file_uploader: Label dan tombolnya sekarang diatur oleh CSS di atas
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file and yolo_model and classifier:
