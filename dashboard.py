@@ -11,6 +11,7 @@ import os
 import json
 from streamlit_lottie import st_lottie
 import base64
+import re
 
 # =========================
 # KONFIGURASI DASAR
@@ -274,21 +275,25 @@ elif st.session_state.page == "dashboard":
                     # Menggunakan nama kelas yang diambil dari model
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # === PERBAIKAN: MEMBERSHKAN NAMA KELAS ===
-                    # Membersihkan karakter Markdown (seperti **) dan spasi ekstra
+                    # === PERBAIKAN: MEMBERSHKAN NAMA KELAS DARI TANDA BACA/MARKDOWN/ANGKA ===
+                    # 1. Hapus karakter Markdown (**)
                     clean_name = raw_class_name.strip().replace('**', '')
-                    final_class_name = clean_name.strip()
+                    # 2. Hapus semua karakter non-alfabet (kecuali spasi) di akhir string, 
+                    #    jika nama objek Anda mungkin memiliki angka atau simbol di akhir (misal: "Nike1")
+                    final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
                     if final_class_name in detection_counts:
                         detection_counts[final_class_name] += 1
                     else:
                         detection_counts[final_class_name] = 1
                 
-                # Membuat ringkasan HTML/Markdown dengan keterangan baru
+                # Membuat ringkasan HTML/Markdown dengan format paling sederhana
                 summary_list = []
                 for name, count in detection_counts.items():
-                    # Format yang bersih: **NamaObjeck**: Jumlah
-                    summary_list.append(f"- **{name}**: {count}")
+                    # Format yang paling sederhana: hanya nama objek, jumlah dipindahkan ke bawah
+                    # Untuk menunjukkan nama objek, kita tampilkan dalam bentuk list.
+                    # Kita gunakan Markdown sederhana tanpa bold untuk list item.
+                    summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
                 <div class="detection-summary">
