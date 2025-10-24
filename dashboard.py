@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX NAMA LAGU DI SIDEBAR)
+# CSS DARK FUTURISTIK (DITAMBAH FIX SELECTBOX LAGU)
 # =========================
 st.markdown("""
 <style>
@@ -115,10 +115,10 @@ h1, h2, h3 {
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 
-/* 🔥 PERBAIKAN: Gaya untuk latar belakang nama lagu di sidebar */
+/* FIX: Gaya untuk latar belakang nama lagu di sidebar */
 .music-title-box {
-    background-color: rgba(40, 40, 60, 0.8); /* Latar belakang gelap */
-    color: #00b4d8 !important; /* Warna teks biru neon */
+    background-color: rgba(40, 40, 60, 0.8);
+    color: #00b4d8 !important; 
     padding: 10px;
     border-radius: 8px;
     margin-top: 10px;
@@ -126,6 +126,23 @@ h1, h2, h3 {
     font-size: 15px;
     font-weight: bold;
     border: 1px solid #556688;
+}
+
+/* 🔥 PERBAIKAN UTAMA: Selectbox Lagu */
+/* Mengubah warna latar belakang input selectbox */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] input {
+    background-color: rgba(40, 40, 60, 0.8) !important;
+    color: white !important;
+}
+/* Mengubah warna latar belakang kotak display selectbox */
+[data-testid="stSidebar"] [data-baseweb="select"] > div:first-child {
+    background-color: rgba(40, 40, 60, 0.8) !important;
+    color: white !important;
+    border-color: #556688 !important;
+}
+/* Mengubah warna teks di dalam selectbox */
+[data-testid="stSidebar"] [data-baseweb="select"] span {
+    color: white !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -204,7 +221,9 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
+            # Selectbox untuk memilih lagu
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
+            # st.sidebar.selectbox akan memiliki tampilan yang lebih gelap karena CSS
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:",
                 options=music_files,
@@ -226,12 +245,13 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
-                # 🔥 PERBAIKAN DI SINI: Menggunakan kelas CSS 'music-title-box'
+                # Nama lagu ditampilkan di atas pemutar audio dengan latar belakang yang jelas
                 st.sidebar.markdown(f"""
                 <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar:</p>
                 <div class="music-title-box">{st.session_state.current_music}</div>
                 """, unsafe_allow_html=True)
                 
+                # Pemutar audio bawaan Streamlit
                 st.sidebar.audio(
                     audio_bytes,
                     format='audio/mp3',
