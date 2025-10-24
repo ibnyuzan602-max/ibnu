@@ -359,6 +359,14 @@ elif st.session_state.page == "dashboard":
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
+        # 🔥 PERBAIKAN: Konversi eksplisit ke RGB untuk mencegah InvalidArgumentError
+        try:
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+        except Exception as e:
+            st.error(f"Gagal mengonversi gambar ke RGB: {e}. Harap coba dengan file gambar lain.")
+            st.stop() # Hentikan proses jika gagal konversi.
+        
         st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
         
         with st.spinner("🤖 AI sedang menganalisis gambar..."):
@@ -413,11 +421,14 @@ elif st.session_state.page == "dashboard":
 
         elif mode == "Klasifikasi Gambar":
             st.info("🧠 Menjalankan klasifikasi gambar...")
+            
+            # Pastikan img_resized dan img_array menggunakan gambar RGB yang sudah dikonversi
             img_resized = img.resize((128, 128))
             img_array = image.img_to_array(img_resized)
             img_array = np.expand_dims(img_array, axis=0) / 255.0
             
-            prediction = classifier.predict(img_array, verbose=0)
+            # 🔥 BARIS INI TEMPAT ERROR TERJADI, SEHARUSNYA SUDAH TERPERBAIKI DENGAN KONVERSI RGB
+            prediction = classifier.predict(img_array, verbose=0) 
             class_index = np.argmax(prediction)
             confidence = np.max(prediction)
             
