@@ -64,7 +64,7 @@ h1, h2, h3 {
     margin-top: 15px;
     text-align: left;
     border: 1px solid #555;
-    color: #f0f0f0; /* Memastikan teks di dalam summary terlihat */
+    color: #f0f0f0; 
 }
 .warning-box {
     background-color: rgba(255, 193, 7, 0.1);
@@ -150,31 +150,25 @@ if os.path.exists(music_folder):
     else:
         st.sidebar.markdown("#### 🎧 Player Musik")
 
-        # Simpan lagu aktif di session_state
         if "current_music" not in st.session_state:
             st.session_state.current_music = music_files[0]
 
-        # Dropdown untuk pilih lagu
         selected_music = st.sidebar.selectbox(
             "Pilih Lagu:",
             options=music_files,
             index=music_files.index(st.session_state.current_music)
         )
 
-        # Update jika lagu diganti
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
             st.rerun()
 
-        # Path file musik aktif
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
-        # Encode file musik ke base64 untuk diputar di HTML
         with open(music_path, "rb") as f:
             audio_data = f.read()
             audio_b64 = base64.b64encode(audio_data).decode()
 
-        # Player musik (manual control)
         audio_html = f"""
         <audio controls loop style="width:100%">
             <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
@@ -230,34 +224,26 @@ elif st.session_state.page == "dashboard":
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # =======================================================
-    # DEFINISI NAMA KELAS
-    # =======================================================
-    # 1. Klasifikasi Gambar (Keras)
-    # 0 = Kucing, 1 = Anjing, 2 = Manusia
+    # 1. DEFINISI NAMA KELAS KLASIFIKASI (Keras)
+    # Mapping: 0 = Kucing, 1 = Anjing, 2 = Manusia
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
-    
-    # 2. Deteksi Objek (YOLO)
-    # MAPPING: ID Kelas -> Nama Objek
-    YOLO_CLASS_NAMES = {
-        0: "Kucing 🐈", 
-        1: "Anjing 🐕", 
-        2: "Manusia 👤"
-        # PASTIKAN ID KELAS YOLO SUDAH BENAR SESUAI MODEL .pt ANDA
-    }
-
 
     @st.cache_resource
     def load_models():
         try:
             yolo_model = YOLO(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 4.pt"))
             classifier = tf.keras.models.load_model(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 2.h5"))
-            return yolo_model, classifier
+            
+            # 2. AMBIL NAMA KELAS YOLO DARI MODEL
+            yolo_names = yolo_model.names 
+            
+            return yolo_model, classifier, yolo_names
         except Exception as e:
             st.warning(f"⚠ Gagal memuat model: {e}")
-            return None, None
+            return None, None, {}
 
-    yolo_model, classifier = load_models()
+    # Tangkap model dan nama kelas YOLO
+    yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
@@ -273,17 +259,19 @@ elif st.session_state.page == "dashboard":
             
             # Lakukan prediksi
             results = yolo_model.predict(source=img_cv2, verbose=False)
+            
+            # Visualisasikan hasil (plot secara otomatis menambahkan label nama kelas)
             result_img = results[0].plot()
             st.image(result_img, caption="🎯 Hasil Deteksi", use_column_width=True)
             
-            # MENGHITUNG DAN MENAMPILKAN RINGKASAN DETEKSI
+            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL
             detection_counts = {}
             
             if results and len(results[0].boxes) > 0:
-                # Iterasi melalui kotak deteksi
                 for box in results[0].boxes:
                     class_id = int(box.cls[0])
-                    # Mengambil nama dari mapping YOLO_CLASS_NAMES
+                    
+                    # Menggunakan nama kelas yang diambil dari model
                     class_name = YOLO_CLASS_NAMES.get(class_id, f"Kelas Tidak Dikenal (ID: {class_id})")
                     
                     if class_name in detection_counts:
