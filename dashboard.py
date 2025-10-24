@@ -250,7 +250,10 @@ elif st.session_state.page == "dashboard":
 
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
-        st.image(img, caption="🖼 Gambar yang Diupload", use_column_width=True)
+        
+        # PERBAIKAN WARNING 1: Mengganti use_column_width
+        st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
+        
         with st.spinner("🤖 AI sedang menganalisis gambar..."):
             time.sleep(1.5)
 
@@ -261,9 +264,10 @@ elif st.session_state.page == "dashboard":
             # Lakukan prediksi
             results = yolo_model.predict(source=img_cv2, verbose=False)
             
-            # Visualisasikan hasil (plot secara otomatis menambahkan label nama kelas)
+            # Visualisasikan hasil
             result_img = results[0].plot()
-            st.image(result_img, caption="🎯 Hasil Deteksi", use_column_width=True)
+            # PERBAIKAN WARNING 2: Mengganti use_column_width
+            st.image(result_img, caption="🎯 Hasil Deteksi", use_container_width=True)
             
             # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (Hanya Nama Objek)
             detection_counts = {}
@@ -275,11 +279,8 @@ elif st.session_state.page == "dashboard":
                     # Menggunakan nama kelas yang diambil dari model
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # === PERBAIKAN: MEMBERSHKAN NAMA KELAS DARI TANDA BACA/MARKDOWN/ANGKA ===
-                    # 1. Hapus karakter Markdown (**)
+                    # Membersihkan nama kelas dari tanda baca/Markdown/angka
                     clean_name = raw_class_name.strip().replace('**', '')
-                    # 2. Hapus semua karakter non-alfabet (kecuali spasi) di akhir string, 
-                    #    jika nama objek Anda mungkin memiliki angka atau simbol di akhir (misal: "Nike1")
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
                     if final_class_name in detection_counts:
@@ -287,12 +288,10 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[final_class_name] = 1
                 
-                # Membuat ringkasan HTML/Markdown dengan format paling sederhana
+                # Membuat ringkasan HTML/Markdown dengan format sederhana
                 summary_list = []
                 for name, count in detection_counts.items():
-                    # Format yang paling sederhana: hanya nama objek, jumlah dipindahkan ke bawah
-                    # Untuk menunjukkan nama objek, kita tampilkan dalam bentuk list.
-                    # Kita gunakan Markdown sederhana tanpa bold untuk list item.
+                    # Format yang paling sederhana: hanya nama objek (tanpa angka jumlah objek)
                     summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
