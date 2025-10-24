@@ -300,7 +300,7 @@ yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 # HALAMAN 1: WELCOME
 # =========================
 if st.session_state.page == "home":
-    st.markdown("<h1 style='text-align:center;'>🤖 Selamat Datang di AI Vision Pro</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center;'>🤖 Selamat Datang di Vision Pro</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;'>Sistem Cerdas untuk Deteksi Objek dan Klasifikasi Gambar</p>", unsafe_allow_html=True)
     
     # Konten Lottie
@@ -325,7 +325,7 @@ if st.session_state.page == "home":
 # HALAMAN 2: DASHBOARD
 # =========================
 elif st.session_state.page == "dashboard":
-    st.title("🤖 AI Vision Pro Dashboard")
+    st.title("🤖 Vision Pro Dashboard")
     st.markdown("### Sistem Deteksi dan Klasifikasi Gambar Cerdas")
 
     # =========================
@@ -384,10 +384,10 @@ elif st.session_state.page == "dashboard":
     # =========================
     # KONTROL MODE AI (DI DALAM SIDEBAR)
     # =========================
-    st.sidebar.header("🧠 Mode AI")
+    st.sidebar.header("🧠 Mode Sistem")
     mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
     st.sidebar.markdown("---")
-    st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
+    st.sidebar.info("💡 Unggah gambar, lalu biarkan sistem menganalisis secara otomatis.")
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     # =========================
@@ -407,7 +407,7 @@ elif st.session_state.page == "dashboard":
         
         st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
         
-        with st.spinner("🤖 AI sedang menganalisis gambar..."):
+        with st.spinner("🤖 Sistem sedang menganalisis gambar..."):
             time.sleep(1.5)
 
         # =========================
