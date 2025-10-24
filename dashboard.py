@@ -24,11 +24,36 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DENGAN FIX TERBARU)
+# CSS DARK FUTURISTIK (DENGAN STARFIELD ANIMATION)
 # =========================
 st.markdown("""
 <style>
+/* Animasi Starfield */
+@keyframes move-background {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 10000px 10000px; /* Jarak pergerakan besar untuk efek cepat */
+    }
+}
+/* Efek bintang dengan box-shadow */
+.starfield {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Pastikan di belakang semua konten */
+    /* Membuat banyak bintang kecil putih dengan box-shadow */
+    background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><filter id="f1" x="0" y="0" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="0.5" /></filter></defs><rect width="100%" height="100%" fill="black" /><circle cx="10" cy="10" r="1" fill="white" /><circle cx="50" cy="150" r="1" fill="white" /><circle cx="150" cy="50" r="1" fill="white" /><circle cx="200" cy="200" r="1" fill="white" /><circle cx="300" cy="50" r="1" fill="white" /><circle cx="400" cy="100" r="1" fill="white" /></svg>');
+    background-size: 500px 500px;
+    animation: move-background 100s linear infinite;
+    opacity: 0.5; /* Kurangi opacity agar tidak terlalu mengganggu */
+}
+
 [data-testid="stAppViewContainer"] {
+    /* Latar belakang utama: warna dasar gelap */
     background: radial-gradient(circle at 10% 20%, #0b0b17, #1b1b2a 80%);
     color: white;
 }
@@ -115,7 +140,8 @@ h1, h2, h3 {
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 
-/* 🔥 Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
+
+/* Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
 /* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
     background-color: rgba(40, 40, 60, 0.8) !important; /* Latar Belakang Gelap */
@@ -165,7 +191,7 @@ div[role="option"][aria-selected="true"] {
     border-radius: 8px !important;
 }
 </style>
-""", unsafe_allow_html=True)
+<div class="starfield"></div> """, unsafe_allow_html=True)
 
 # =========================
 # FUNGSI LOAD LOTTIE
@@ -264,14 +290,13 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
-                # Blok "music-title-box" yang berwarna biru neon telah dihapus
-                
                 # Pemutar audio bawaan Streamlit
                 st.sidebar.audio(
                     audio_bytes,
                     format='audio/mp3',
                 )
                 
+                st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
             
     else:
         st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
