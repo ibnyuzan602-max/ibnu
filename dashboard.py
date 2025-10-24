@@ -10,7 +10,7 @@ import io
 import os
 import json
 from streamlit_lottie import st_lottie
-import base64  # untuk encode musik ke base64 agar bisa autoplay lewat HTML
+import base64
 
 # =========================
 # KONFIGURASI DASAR
@@ -56,6 +56,14 @@ h1, h2, h3 {
     margin-top: 20px;
     text-align: center;
     box-shadow: 0 4px 25px rgba(0,0,0,0.25);
+}
+.detection-summary {
+    background: rgba(40, 40, 60, 0.6);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: left;
+    border: 1px solid #555;
 }
 .warning-box {
     background-color: rgba(255, 193, 7, 0.1);
@@ -220,6 +228,22 @@ elif st.session_state.page == "dashboard":
     st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
+    
+    # DAFTAR NAMA KELAS UNTUK KLASIFIKASI (Keras)
+    CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
+    
+    # DAFTAR NAMA KELAS UNTUK DETEKSI OBJEK (YOLO)
+    # Anda harus tahu mapping indeks kelas model YOLO Anda. 
+    # Jika model Anda adalah custom, ini harus dicocokkan dengan file data.yaml model Anda.
+    # Contoh di bawah menggunakan 3 kelas yang sama sebagai ilustrasi, 
+    # tapi biasanya model YOLO memiliki banyak kelas (misal: COCO dataset memiliki 80 kelas).
+    YOLO_CLASS_NAMES = {
+        0: "Kucing 🐈", 
+        1: "Anjing 🐕", 
+        2: "Manusia 👤"
+        # Tambahkan kelas lain jika model YOLO Anda mendeteksi lebih banyak objek
+    }
+
 
     @st.cache_resource
     def load_models():
@@ -244,9 +268,48 @@ elif st.session_state.page == "dashboard":
         if mode == "Deteksi Objek (YOLO)":
             st.info("🚀 Menjalankan deteksi objek...")
             img_cv2 = np.array(img)
-            results = yolo_model.predict(source=img_cv2)
+            
+            # Lakukan prediksi
+            results = yolo_model.predict(source=img_cv2, verbose=False)
             result_img = results[0].plot()
             st.image(result_img, caption="🎯 Hasil Deteksi", use_column_width=True)
+            
+            # =======================================================
+            # PERUBAHAN: MENGHITUNG DAN MENAMPILKAN RINGKASAN DETEKSI
+            # =======================================================
+            detection_counts = {}
+            
+            # Cek jika ada deteksi
+            if results and len(results[0].boxes) > 0:
+                # Iterasi melalui kotak deteksi
+                for box in results[0].boxes:
+                    class_id = int(box.cls[0])
+                    class_name = YOLO_CLASS_NAMES.get(class_id, f"Kelas Tidak Dikenal (ID: {class_id})")
+                    
+                    if class_name in detection_counts:
+                        detection_counts[class_name] += 1
+                    else:
+                        detection_counts[class_name] = 1
+                
+                # Buat string ringkasan
+                summary_list = []
+                for name, count in detection_counts.items():
+                    summary_list.append(f"<li>**{name}**: {count} objek</li>")
+                
+                summary_html = f"""
+                <div class="detection-summary">
+                    <h4>🔍 Ringkasan Objek Terdeteksi</h4>
+                    <ul>
+                        {''.join(summary_list)}
+                    </ul>
+                    <p>Total Objek Terdeteksi: <b>{len(results[0].boxes)}</b></p>
+                </div>
+                """
+                st.markdown(summary_html, unsafe_allow_html=True)
+            else:
+                st.info("Tidak ada objek yang terdeteksi dalam gambar ini.")
+            
+            # Tombol Download
             img_bytes = io.BytesIO()
             Image.fromarray(result_img).save(img_bytes, format="PNG")
             img_bytes.seek(0)
@@ -257,13 +320,21 @@ elif st.session_state.page == "dashboard":
             img_resized = img.resize((128, 128))
             img_array = image.img_to_array(img_resized)
             img_array = np.expand_dims(img_array, axis=0) / 255.0
-            prediction = classifier.predict(img_array)
+            
+            prediction = classifier.predict(img_array, verbose=0)
             class_index = np.argmax(prediction)
             confidence = np.max(prediction)
+            
+            # Mendapatkan nama kelas dari indeks
+            try:
+                predicted_class_name = CLASS_NAMES[class_index]
+            except IndexError:
+                predicted_class_name = f"Kelas Tidak Dikenal (Indeks: {class_index})"
+                
             st.markdown(f"""
             <div class="result-card">
                 <h3>🧾 Hasil Prediksi</h3>
-                <p><b>Kelas:</b> {class_index}</p>
+                <p><b>Kelas:</b> {predicted_class_name}</p>
                 <p><b>Akurasi:</b> {confidence:.2%}</p>
             </div>
             """, unsafe_allow_html=True)
@@ -283,7 +354,7 @@ elif st.session_state.page == "dashboard":
     else:
         st.markdown("<div class='warning-box'>📂 Silakan unggah gambar terlebih dahulu.</div>", unsafe_allow_html=True)
 
-    # 🔹 TOMBOL KEMBALI — Sudah diperbaiki indentasinya
+    # 🔹 TOMBOL KEMBALI
     if st.sidebar.button("⬅ Kembali ke Halaman Awal", key="back_to_home_fixed", use_container_width=True):
         st.session_state.page = "home"
         st.rerun()
