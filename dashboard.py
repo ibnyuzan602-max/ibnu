@@ -106,7 +106,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (Final Fix: Memastikan Ganti Lagu DAN Loop Bekerja)
+# SISTEM MUSIK (Final Fix: Non-Autoplay, Loop Aktif, Ganti Lagu Berfungsi)
 # =========================
 music_folder = "music"
 
@@ -125,10 +125,12 @@ if os.path.exists(music_folder):
         # ---------------------------------------------
         
         # Selectbox untuk memilih lagu
+        # Tambahkan pengecekan index yang aman
+        current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
         selected_music = st.sidebar.selectbox(
             "Pilih Lagu:",
             options=music_files,
-            index=music_files.index(st.session_state.current_music),
+            index=current_index,
             key="music_selector"
         )
         
@@ -149,15 +151,21 @@ if os.path.exists(music_folder):
         except FileNotFoundError:
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
-        # Menggunakan st.markdown dengan tag <audio> yang memiliki 'loop' dan 'autoplay'
+        # Gunakan st.empty() untuk menampung konten audio dan memaksanya mereset
+        audio_placeholder = st.sidebar.empty()
+
+        # Generate timestamp unik untuk mengatasi caching
+        unique_timestamp = time.time()
+        
+        # Menggunakan st.markdown dengan tag <audio>: 'loop' ADA, 'autoplay' DIHAPUS
         audio_html = f"""
         <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
-        <audio controls loop autoplay style="width:100%">
-            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+        <audio controls loop style="width:100%">
+            <source src="data:audio/mp3;base64,{audio_b64}?t={unique_timestamp}" type="audio/mp3">
             Browser Anda tidak mendukung audio.
         </audio>
         """
-        st.sidebar.markdown(
+        audio_placeholder.markdown(
             audio_html, 
             unsafe_allow_html=True
         )
