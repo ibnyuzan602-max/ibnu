@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX SELECTBOX LAGU)
+# CSS DARK FUTURISTIK (DITAMBAH FIX MENU DROP-DOWN)
 # =========================
 st.markdown("""
 <style>
@@ -128,21 +128,38 @@ h1, h2, h3 {
     border: 1px solid #556688;
 }
 
-/* 🔥 PERBAIKAN UTAMA: Selectbox Lagu */
-/* Mengubah warna latar belakang input selectbox */
+/* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] input {
     background-color: rgba(40, 40, 60, 0.8) !important;
     color: white !important;
 }
-/* Mengubah warna latar belakang kotak display selectbox */
 [data-testid="stSidebar"] [data-baseweb="select"] > div:first-child {
     background-color: rgba(40, 40, 60, 0.8) !important;
     color: white !important;
     border-color: #556688 !important;
 }
-/* Mengubah warna teks di dalam selectbox */
 [data-testid="stSidebar"] [data-baseweb="select"] span {
     color: white !important;
+}
+
+/* 🔥 PERBAIKAN UTAMA: Menu Dropdown (List Pilihan) */
+/* Mengubah latar belakang menu drop-down secara keseluruhan */
+div[data-baseweb="popover"] {
+    background-color: rgba(15, 15, 25, 1) !important; /* Latar belakang sangat gelap */
+    border: 1px solid #556688 !important;
+    border-radius: 8px;
+}
+
+/* Mengubah latar belakang item-item di dalam drop-down */
+div[role="option"] {
+    background-color: transparent !important;
+    color: white !important; /* Pastikan teks pilihan tetap putih */
+}
+
+/* Mengubah warna teks pilihan saat di-hover (diarahkan mouse) */
+div[role="option"]:hover {
+    background-color: #334466 !important; /* Warna biru tua saat hover */
+    color: #00b4d8 !important; /* Warna teks biru neon saat hover */
 }
 </style>
 """, unsafe_allow_html=True)
@@ -221,9 +238,8 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
-            # Selectbox untuk memilih lagu
+            # Selectbox untuk memilih lagu (Sekarang tampilan kotak dan drop-down-nya gelap)
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
-            # st.sidebar.selectbox akan memiliki tampilan yang lebih gelap karena CSS
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:",
                 options=music_files,
