@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK 
+# CSS DARK FUTURISTIK (DITAMBAH FIX TOMBOL HOME)
 # =========================
 st.markdown("""
 <style>
@@ -32,7 +32,6 @@ st.markdown("""
     background: radial-gradient(circle at 10% 20%, #0b0b17, #1b1b2a 80%);
     color: white;
 }
-/* Catatan: stSidebar hanya akan di-render saat dibutuhkan di Halaman Dashboard */
 [data-testid="stSidebar"] {
     background: rgba(15, 15, 25, 0.95);
     backdrop-filter: blur(10px);
@@ -87,7 +86,7 @@ h1, h2, h3 {
 
 /* FIX: Target Tombol "Browse Files" di dalam st.file_uploader */
 [data-testid="stFileUploader"] button {
-    background-color: #334466; /* Biru tua kontras */
+    background-color: #334466; 
     color: white !important;
     border: 1px solid #556688;
     padding: 8px 12px;
@@ -97,7 +96,24 @@ h1, h2, h3 {
 }
 
 [data-testid="stFileUploader"] button:hover {
-    background-color: #445577; /* Warna hover */
+    background-color: #445577; 
+}
+
+/* 🔥 PERBAIKAN: Target Tombol di Halaman Awal (Masuk ke Website) */
+/* Tombol di Halaman Awal adalah tombol pertama yang di-render di halaman utama */
+.stButton>button:first-child { 
+    background-color: #0077b6; /* Biru Neon untuk kontras */
+    color: white !important;
+    border: 1px solid #00b4d8;
+    font-size: 1.2em;
+    font-weight: bold;
+    height: 3.5em; /* Membuat tombol lebih besar */
+    box-shadow: 0 0 15px rgba(0, 119, 182, 0.5); /* Efek glowing */
+}
+
+.stButton>button:first-child:hover {
+    background-color: #0096c7;
+    box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -144,6 +160,7 @@ if st.session_state.page == "home":
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
+        # Tombol ini sekarang menggunakan gaya CSS kustom di atas
         if st.button("🚀 Masuk ke Website", use_container_width=True):
             st.session_state.page = "dashboard"
             with st.spinner("🔄 Memuat halaman..."):
@@ -161,7 +178,7 @@ elif st.session_state.page == "dashboard":
     st.markdown("### Sistem Deteksi dan Klasifikasi Gambar Cerdas")
 
     # =========================
-    # SISTEM MUSIK (DIPINDAHKAN KE DALAM DASHBOARD)
+    # SISTEM MUSIK (DI DALAM SIDEBAR)
     # =========================
     music_folder = "music"
 
@@ -173,12 +190,9 @@ elif st.session_state.page == "dashboard":
         else:
             st.sidebar.markdown("#### 🎧 Player Musik")
 
-            # --- INISIALISASI SESSION STATE YANG AMAN ---
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
-            # ---------------------------------------------
             
-            # Selectbox untuk memilih lagu
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:",
@@ -187,7 +201,6 @@ elif st.session_state.page == "dashboard":
                 key="music_selector"
             )
             
-            # Perbarui state
             if selected_music != st.session_state.current_music:
                 st.session_state.current_music = selected_music
                 st.rerun() 
@@ -216,8 +229,6 @@ elif st.session_state.page == "dashboard":
     else:
         st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
     # =========================
-    # AKHIR SISTEM MUSIK
-    # =========================
 
     lottie_ai = load_lottie_url(LOTTIE_DASHBOARD)
     if lottie_ai:
@@ -226,7 +237,7 @@ elif st.session_state.page == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     # =========================
-    # KONTROL MODE AI (DIPINDAHKAN KE DALAM DASHBOARD)
+    # KONTROL MODE AI (DI DALAM SIDEBAR)
     # =========================
     st.sidebar.header("🧠 Mode AI")
     mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
