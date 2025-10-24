@@ -63,7 +63,7 @@ st.markdown("""
     color: white;
 }
 
-/* 🔥 FIX UTAMA: Memaksa warna teks menjadi putih terang untuk SEMUA konten di halaman utama */
+/* 🔥 FIX UTAMA: Memaksa warna teks menjadi putih terang untuk SEMUA konten */
 [data-testid="stAppViewContainer"] p, 
 [data-testid="stAppViewContainer"] div, 
 [data-testid="stAppViewContainer"] label,
@@ -262,10 +262,11 @@ if "page" not in st.session_state:
 # HALAMAN 1: WELCOME
 # =========================
 if st.session_state.page == "home":
+    # Tulisan di sini dipastikan putih terang oleh CSS
     st.markdown("<h1 style='text-align:center;'>🤖 Selamat Datang di AI Vision Pro</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;'>Sistem Cerdas untuk Deteksi Objek dan Klasifikasi Gambar</p>", unsafe_allow_html=True)
     
-    # Konten Lottie
+    # Konten Lottie sekarang transparan
     lottie = load_lottie_url(LOTTIE_WELCOME)
     if lottie:
         st.markdown("<div class='lottie-center'>", unsafe_allow_html=True)
@@ -287,6 +288,7 @@ if st.session_state.page == "home":
 # HALAMAN 2: DASHBOARD
 # =========================
 elif st.session_state.page == "dashboard":
+    # Tulisan di sini dipastikan putih terang oleh CSS
     st.title("🤖 AI Vision Pro Dashboard")
     st.markdown("### Sistem Deteksi dan Klasifikasi Gambar Cerdas")
 
@@ -306,7 +308,7 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
-            # Label "Pilih Lagu:" dipertahankan
+            # Label "Pilih Lagu:" dipertahankan (warna putih oleh CSS)
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:", 
@@ -376,6 +378,7 @@ elif st.session_state.page == "dashboard":
     # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
+    # Label dipastikan putih terang oleh CSS
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file and yolo_model and classifier:
