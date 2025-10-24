@@ -138,7 +138,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (Diperbaiki dari AttributeError)
+# SISTEM MUSIK (FINAL FIX)
 # =========================
 music_folder = "music"
 
@@ -153,10 +153,8 @@ if os.path.exists(music_folder):
 
         # --- INISIALISASI SESSION STATE YANG AMAN ---
         if "current_music" not in st.session_state:
+            # Tetapkan lagu pertama sebagai default jika belum ada sesi
             st.session_state.current_music = music_files[0]
-            
-        if "music_key" not in st.session_state:
-             st.session_state.music_key = time.time()
         # ---------------------------------------------
         
         # Selectbox untuk memilih lagu
@@ -167,12 +165,10 @@ if os.path.exists(music_folder):
             key="music_selector"
         )
         
-        # Perbarui state hanya jika lagu benar-benar berubah
+        # Perbarui state dan panggil rerun HANYA jika lagu benar-benar berubah
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
-            # Ubah key untuk memaksa Streamlit merender ulang elemen <audio>
-            st.session_state.music_key = time.time() 
-            # Force rerun untuk memastikan semua widget player musik di-update segera
+            # Paksa seluruh aplikasi untuk memuat ulang agar elemen <audio> baru di-render
             st.rerun() 
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
@@ -185,7 +181,7 @@ if os.path.exists(music_folder):
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             audio_b64 = ""
 
-        # GUNAKAN KEY UNIK UNTUK MEMAKSA WIDGET AUDIO DI-RESET
+        # Render elemen audio menggunakan HTML. Key dihapus karena st.markdown tidak mendukungnya.
         audio_html = f"""
         <audio controls loop autoplay style="width:100%">
             <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
@@ -194,8 +190,7 @@ if os.path.exists(music_folder):
         """
         st.sidebar.markdown(
             audio_html, 
-            unsafe_allow_html=True, 
-            key=f"audio_player_{st.session_state.music_key}"
+            unsafe_allow_html=True
         )
 
 else:
@@ -255,7 +250,6 @@ elif st.session_state.page == "dashboard":
     @st.cache_resource
     def load_models():
         try:
-            # Pastikan path model ini benar
             yolo_model = YOLO(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 4.pt"))
             classifier = tf.keras.models.load_model(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 2.h5"))
             
