@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX TOMBOL HOME)
+# CSS DARK FUTURISTIK (DITAMBAH FIX NAMA LAGU DI SIDEBAR)
 # =========================
 st.markdown("""
 <style>
@@ -99,21 +99,33 @@ h1, h2, h3 {
     background-color: #445577; 
 }
 
-/* 🔥 PERBAIKAN: Target Tombol di Halaman Awal (Masuk ke Website) */
-/* Tombol di Halaman Awal adalah tombol pertama yang di-render di halaman utama */
+/* FIX: Target Tombol di Halaman Awal (Masuk ke Website) */
 .stButton>button:first-child { 
-    background-color: #0077b6; /* Biru Neon untuk kontras */
+    background-color: #0077b6; 
     color: white !important;
     border: 1px solid #00b4d8;
     font-size: 1.2em;
     font-weight: bold;
-    height: 3.5em; /* Membuat tombol lebih besar */
-    box-shadow: 0 0 15px rgba(0, 119, 182, 0.5); /* Efek glowing */
+    height: 3.5em; 
+    box-shadow: 0 0 15px rgba(0, 119, 182, 0.5); 
 }
 
 .stButton>button:first-child:hover {
     background-color: #0096c7;
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
+}
+
+/* 🔥 PERBAIKAN: Gaya untuk latar belakang nama lagu di sidebar */
+.music-title-box {
+    background-color: rgba(40, 40, 60, 0.8); /* Latar belakang gelap */
+    color: #00b4d8 !important; /* Warna teks biru neon */
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid #556688;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -160,7 +172,6 @@ if st.session_state.page == "home":
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        # Tombol ini sekarang menggunakan gaya CSS kustom di atas
         if st.button("🚀 Masuk ke Website", use_container_width=True):
             st.session_state.page = "dashboard"
             with st.spinner("🔄 Memuat halaman..."):
@@ -215,8 +226,10 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
+                # 🔥 PERBAIKAN DI SINI: Menggunakan kelas CSS 'music-title-box'
                 st.sidebar.markdown(f"""
-                <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
+                <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar:</p>
+                <div class="music-title-box">{st.session_state.current_music}</div>
                 """, unsafe_allow_html=True)
                 
                 st.sidebar.audio(
@@ -224,6 +237,7 @@ elif st.session_state.page == "dashboard":
                     format='audio/mp3',
                 )
                 
+                st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
             
     else:
         st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
