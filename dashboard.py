@@ -224,7 +224,6 @@ elif st.session_state.page == "dashboard":
                     format='audio/mp3',
                 )
                 
-                st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
             
     else:
         st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
