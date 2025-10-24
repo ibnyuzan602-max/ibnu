@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK
+# CSS DARK FUTURISTIK (DITAMBAH FIX KETERBACAAN TEKS UPLOAD)
 # =========================
 st.markdown("""
 <style>
@@ -77,6 +77,13 @@ h1, h2, h3 {
     width: 90%;
     margin: 15px auto;
 }
+
+/* 🔥 PERBAIKAN: Target label st.file_uploader agar teks terlihat jelas */
+[data-testid="stFileUploader"] label p {
+    color: #f0f0f0 !important; /* Warna putih cerah */
+    font-size: 1.1em; /* Sedikit lebih besar */
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -106,7 +113,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (FIX FINAL: Menggunakan st.audio() untuk Stabilitas Pemutaran)
+# SISTEM MUSIK (FINAL STABLE: Menggunakan st.audio() tanpa Loop Otomatis)
 # =========================
 music_folder = "music"
 
@@ -150,8 +157,6 @@ if os.path.exists(music_folder):
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
         
         # Menggunakan st.audio()
-        # Kekurangan: Tidak ada 'loop' otomatis dan 'autoplay' di sini.
-        # Solusi: Jika Anda ingin loop, Anda harus mengaktifkannya secara manual pada pemutar di browser.
         if audio_bytes:
             st.sidebar.markdown(f"""
             <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
@@ -162,6 +167,9 @@ if os.path.exists(music_folder):
                 audio_bytes,
                 format='audio/mp3',
             )
+            
+            # Keterangan untuk pengguna tentang fitur loop yang hilang
+            st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
         
 else:
     st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
@@ -169,6 +177,7 @@ else:
 # AKHIR SISTEM MUSIK
 # =========================
 
+# --- HALAMAN UTAMA ---
 
 # =========================
 # HALAMAN 1: WELCOME
@@ -208,7 +217,8 @@ elif st.session_state.page == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.sidebar.header("🧠 Mode AI")
-    mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar", "AI Insight"])
+    # Opsi sudah diperbarui
+    mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
     st.sidebar.markdown("---")
     st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
@@ -233,6 +243,7 @@ elif st.session_state.page == "dashboard":
     # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
+    # Perhatikan: Label 'Unggah Gambar...' seharusnya sudah terlihat jelas sekarang karena CSS di atas.
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file and yolo_model and classifier:
@@ -256,7 +267,7 @@ elif st.session_state.page == "dashboard":
             # Perbaikan Warning Streamlit: use_container_width
             st.image(result_img, caption="🎯 Hasil Deteksi", use_container_width=True)
             
-            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (DISEMPURNAKAN)
+            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (SUDAH DIPERJELAS)
             detection_counts = {}
             
             if results and len(results[0].boxes) > 0:
@@ -265,7 +276,7 @@ elif st.session_state.page == "dashboard":
                     
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # Pembersihan nama kelas dari tanda baca/Markdown/angka
+                    # Pembersihan nama kelas: Hapus tanda bintang/markdown/angka berlebihan
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -277,13 +288,13 @@ elif st.session_state.page == "dashboard":
                 # Membuat ringkasan HTML/Markdown dengan format sederhana
                 summary_list = []
                 for name, count in detection_counts.items():
-                    # Format final: Hanya nama objek (tanpa bold, tanpa angka count)
-                    summary_list.append(f"- {name}") 
+                    # Format yang diperjelas: [Nama Objek] ([Jumlah] objek)
+                    summary_list.append(f"- {name} ({count} objek)") 
                 
                 summary_html = f"""
                 <div class="detection-summary">
                     <h4>🔍 Ringkasan Objek Terdeteksi</h4>
-                    <p>Objek yang terdeteksi adalah:</p>
+                    <p>Jenis objek yang terdeteksi:</p>
                     <p>
                         {'<br>'.join(summary_list)}
                     </p>
@@ -323,16 +334,7 @@ elif st.session_state.page == "dashboard":
                 <p><b>Akurasi:</b> {confidence:.2%}</p>
             </div>
             """, unsafe_allow_html=True)
-
-        elif mode == "AI Insight":
-            st.info("🔍 Mode Insight Aktif")
-            st.markdown("""
-            <div class="result-card">
-                <h3>💬 Insight Otomatis</h3>
-                <p>AI menganalisis pola visual, bentuk, dan warna utama.</p>
-                <p>Fitur ini masih dalam tahap pengembangan.</p>
-            </div>
-            """, unsafe_allow_html=True)
+        
 
     elif uploaded_file and (yolo_model is None or classifier is None):
         st.markdown("<div class='warning-box'>⚠ Model AI gagal dimuat. Harap periksa path model.</div>", unsafe_allow_html=True)
