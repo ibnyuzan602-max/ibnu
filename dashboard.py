@@ -106,7 +106,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (FINAL FIX untuk Ganti Lagu dan Loop)
+# SISTEM MUSIK (Final Fix: Memastikan Ganti Lagu DAN Loop Bekerja)
 # =========================
 music_folder = "music"
 
@@ -135,14 +135,12 @@ if os.path.exists(music_folder):
         # Perbarui state dan panggil rerun HANYA jika lagu benar-benar berubah
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
-            # Memaksa muat ulang agar elemen <audio> baru di-render
+            # PENTING: Memaksa Streamlit me-render ulang seluruh halaman
             st.rerun() 
-        
-        # 🔥 BARIS BARU: Generate unique key untuk memaksa reload browser
-        unique_key = time.time() 
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
+        audio_b64 = ""
         try:
             # Mengubah data audio menjadi base64
             with open(music_path, "rb") as f:
@@ -150,14 +148,12 @@ if os.path.exists(music_folder):
                 audio_b64 = base64.b64encode(audio_data).decode()
         except FileNotFoundError:
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
-            audio_b64 = ""
-
-        # Menggunakan st.markdown dengan tag <audio> yang memiliki 'loop', 'autoplay', 
-        # dan menyertakan unique_key di src untuk memaksa browser memuat ulang.
+            
+        # Menggunakan st.markdown dengan tag <audio> yang memiliki 'loop' dan 'autoplay'
         audio_html = f"""
         <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
         <audio controls loop autoplay style="width:100%">
-            <source src="data:audio/mp3;base64,{audio_b64}#{unique_key}" type="audio/mp3">
+            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
             Browser Anda tidak mendukung audio.
         </audio>
         """
