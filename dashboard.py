@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX MENU DROP-DOWN)
+# CSS DARK FUTURISTIK (DITAMBAH FIX MENU DROP-DOWN BIRU NEON)
 # =========================
 st.markdown("""
 <style>
@@ -99,7 +99,7 @@ h1, h2, h3 {
     background-color: #445577; 
 }
 
-/* FIX: Target Tombol di Halaman Awal (Masuk ke Website) */
+/* FIX: Tombol di Halaman Awal & Kembali ke Halaman Awal */
 .stButton>button:first-child { 
     background-color: #0077b6; 
     color: white !important;
@@ -142,24 +142,32 @@ h1, h2, h3 {
     color: white !important;
 }
 
-/* 🔥 PERBAIKAN UTAMA: Menu Dropdown (List Pilihan) */
-/* Mengubah latar belakang menu drop-down secara keseluruhan */
+/* FIX: Menu Dropdown (List Pilihan) - Container */
 div[data-baseweb="popover"] {
-    background-color: rgba(15, 15, 25, 1) !important; /* Latar belakang sangat gelap */
+    background-color: rgba(15, 15, 25, 1) !important; 
     border: 1px solid #556688 !important;
     border-radius: 8px;
 }
 
-/* Mengubah latar belakang item-item di dalam drop-down */
+/* FIX: Menu Dropdown (List Pilihan) - Item Default */
 div[role="option"] {
     background-color: transparent !important;
-    color: white !important; /* Pastikan teks pilihan tetap putih */
+    color: white !important; 
 }
 
-/* Mengubah warna teks pilihan saat di-hover (diarahkan mouse) */
+/* 🔥 PERBAIKAN UTAMA: Menu Dropdown (List Pilihan) - Item Hover/Pilih */
+/* Menggunakan warna biru neon yang menyala seperti tombol Anda */
 div[role="option"]:hover {
-    background-color: #334466 !important; /* Warna biru tua saat hover */
-    color: #00b4d8 !important; /* Warna teks biru neon saat hover */
+    background-color: #0077b6 !important; /* Biru Neon yang sama dengan tombol utama */
+    color: white !important; /* Pastikan teks tetap putih di atas latar biru */
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5); /* Efek menyala saat di-hover */
+}
+
+/* Tambahan: Mengubah warna saat item dipilih (selected) */
+div[role="option"][aria-selected="true"] {
+    background-color: #0077b6 !important; 
+    color: white !important;
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5); 
 }
 </style>
 """, unsafe_allow_html=True)
@@ -238,7 +246,7 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
-            # Selectbox untuk memilih lagu (Sekarang tampilan kotak dan drop-down-nya gelap)
+            # Selectbox untuk memilih lagu (Tampilan kotak dan drop-down-nya gelap dan biru neon)
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:",
