@@ -63,9 +63,9 @@ st.markdown("""
     color: white;
 }
 
-/* 🔥 FIX UTAMA: Memaksa warna teks menjadi putih terang untuk SEMUA konten */
+/* Memaksa warna teks menjadi putih terang untuk SEMUA konten KECUALI yang spesifik */
 [data-testid="stAppViewContainer"] p, 
-[data-testid="stAppViewContainer"] div, 
+[data-testid="stAppViewContainer"] div:not([data-testid="stFileUploader"] *) , /* Exclude file uploader content */
 [data-testid="stAppViewContainer"] label,
 [data-testid="stAppViewContainer"] span {
     color: white !important;
@@ -78,7 +78,7 @@ h1, h2, h3 {
     color: white !important; 
 }
 
-/* 🔥 FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
+/* FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
 /* Menargetkan kontainer konten utama Streamlit agar transparan */
 [data-testid="stBlock"] { 
     background-color: transparent !important; 
@@ -94,6 +94,24 @@ h1, h2, h3 {
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(2) > div:first-child,
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(3) {
     background-color: transparent !important;
+}
+
+
+/* 🔥 FIX BARU: Teks pada st.file_uploader menjadi HITAM */
+[data-testid="stFileUploader"] > div > div > div > div > p { /* Menargetkan "Drag and drop file here" */
+    color: black !important;
+}
+[data-testid="stFileUploader"] > div > div > div > div > small { /* Menargetkan "Limit 200MB..." */
+    color: black !important;
+}
+/* Menargetkan ikon upload menjadi hitam juga */
+[data-testid="stFileUploader"] svg {
+    fill: black !important;
+}
+/* Pastikan area dropzone itu sendiri (kotak putihnya) tetap putih */
+[data-testid="stFileUploaderDropzone"] {
+    background-color: white !important;
+    border-color: #ddd !important; /* Border abu-abu terang */
 }
 
 
@@ -141,9 +159,9 @@ h1, h2, h3 {
     margin: 15px auto;
 }
 
-/* FIX: Target label st.file_uploader */
+/* FIX: Target label st.file_uploader (Label "Unggah Gambar" di luar kotak) */
 [data-testid="stFileUploader"] label p {
-    color: #f0f0f0 !important; 
+    color: #f0f0f0 !important; /* tetap putih */
     font-size: 1.1em; 
 }
 
@@ -378,7 +396,7 @@ elif st.session_state.page == "dashboard":
     # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
-    # Label dipastikan putih terang oleh CSS
+    # Label "Unggah Gambar" di luar kotak uploader ini tetap putih
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file and yolo_model and classifier:
