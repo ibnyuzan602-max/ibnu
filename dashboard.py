@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK + TOMBOL MUSIK MELAYANG
+# CSS DARK FUTURISTIK
 # =========================
 st.markdown("""
 <style>
@@ -77,38 +77,6 @@ h1, h2, h3 {
     width: 90%;
     margin: 15px auto;
 }
-
-/* Tombol Musik di Kanan Bawah */
-.music-button {
-    position: fixed;
-    bottom: 20px;
-    right: 25px;
-    background-color: #1db954;
-    color: white;
-    border-radius: 50%;
-    width: 55px;
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease;
-}
-.music-button:hover {
-    transform: scale(1.1);
-}
-
-/* Animasi Rotasi Tombol Musik */
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-.rotating {
-    animation: spin 4s linear infinite;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -138,7 +106,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (FINAL FIX)
+# SISTEM MUSIK (FINAL FIX MENGGUNAKAN st.audio)
 # =========================
 music_folder = "music"
 
@@ -153,7 +121,6 @@ if os.path.exists(music_folder):
 
         # --- INISIALISASI SESSION STATE YANG AMAN ---
         if "current_music" not in st.session_state:
-            # Tetapkan lagu pertama sebagai default jika belum ada sesi
             st.session_state.current_music = music_files[0]
         # ---------------------------------------------
         
@@ -168,30 +135,27 @@ if os.path.exists(music_folder):
         # Perbarui state dan panggil rerun HANYA jika lagu benar-benar berubah
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
-            # Paksa seluruh aplikasi untuk memuat ulang agar elemen <audio> baru di-render
+            # Paksa seluruh aplikasi untuk memuat ulang agar st.audio me-reset pemutaran
             st.rerun() 
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
+        audio_bytes = None
         try:
+            # Buka file audio sebagai bytes
             with open(music_path, "rb") as f:
-                audio_data = f.read()
-                audio_b64 = base64.b64encode(audio_data).decode()
+                audio_bytes = f.read()
         except FileNotFoundError:
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
-            audio_b64 = ""
 
-        # Render elemen audio menggunakan HTML. Key dihapus karena st.markdown tidak mendukungnya.
-        audio_html = f"""
-        <audio controls loop autoplay style="width:100%">
-            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
-            Browser Anda tidak mendukung audio.
-        </audio>
-        """
-        st.sidebar.markdown(
-            audio_html, 
-            unsafe_allow_html=True
-        )
+        # GANTI st.markdown dengan st.audio()
+        if audio_bytes:
+            st.sidebar.audio(
+                audio_bytes,
+                format='audio/mp3',
+                # Key di st.audio() memastikan widget di-reset saat nama lagu berubah
+                key=f"player_{st.session_state.current_music}"
+            )
 
 else:
     st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
