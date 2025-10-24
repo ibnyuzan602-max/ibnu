@@ -15,7 +15,6 @@ import re
 
 # =========================
 # KONFIGURASI DASAR
-# (TIDAK BERUBAH)
 # =========================
 st.set_page_config(
     page_title="AI Vision Pro",
@@ -25,8 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK 
-# (SEMUA PERBAIKAN FILE UPLOADER HITAM TETAP DI SINI)
+# CSS DARK FUTURISTIK (SEMUA PERBAIKAN)
 # =========================
 st.markdown("""
 <style>
@@ -67,7 +65,7 @@ st.markdown("""
 
 /* Memaksa warna teks menjadi putih terang untuk SEMUA konten KECUALI yang spesifik */
 [data-testid="stAppViewContainer"] p, 
-[data-testid="stAppViewContainer"] div:not([data-testid="stFileUploader"] *) , /* Exclude file uploader content */
+[data-testid="stAppViewContainer"] div:not([data-testid="stFileUploader"] *) , 
 [data-testid="stAppViewContainer"] label,
 [data-testid="stAppViewContainer"] span {
     color: white !important;
@@ -81,45 +79,58 @@ h1, h2, h3 {
 }
 
 /* FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
-/* Menargetkan kontainer konten utama Streamlit agar transparan */
 [data-testid="stBlock"] { 
     background-color: transparent !important; 
     color: white !important;
 }
 
-/* Menargetkan kontainer di halaman awal (tempat Lottie berada) agar transparan */
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {
     background-color: transparent !important;
 }
-/* Memastikan setiap blok konten transparan */
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:first-child,
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(2) > div:first-child,
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(3) {
     background-color: transparent !important;
 }
 
-
-/* 🔥 FIX BARU: Teks pada st.file_uploader menjadi HITAM PEKAT (#000000) */
+/* 🔥🔥🔥 PERBAIKAN KRITIS 1: Teks pada st.file_uploader (Dropzone) harus HITAM PEKAT */
 
 /* Pastikan area dropzone itu sendiri Putih Murni */
 [data-testid="stFileUploaderDropzone"] {
     background-color: #FFFFFF !important; /* Putih Murni */
-    border-color: #BBBBBB !important; /* Border abu-abu terang */
+    border-color: #BBBBBB !important; 
 }
 
-[data-testid="stFileUploader"] > div > div > div > div > p { /* Menargetkan "Drag and drop file here" */
-    color: #000000 !important; /* HITAM PEKAT */
+/* Menargetkan teks "Drag and drop file here" */
+[data-testid="stFileUploaderDropzone"] p { 
+    color: #000000 !important; /* HARUS HITAM PEKAT */
 }
-[data-testid="stFileUploader"] > div > div > div > div > small { /* Menargetkan "Limit 200MB..." */
-    color: #000000 !important; /* HITAM PEKAT */
+/* Menargetkan teks "Limit 200MB..." */
+[data-testid="stFileUploaderDropzone"] small { 
+    color: #000000 !important; /* HARUS HITAM PEKAT */
 }
 /* Menargetkan ikon upload menjadi HITAM PEKAT */
-[data-testid="stFileUploader"] svg {
-    fill: #000000 !important; /* HITAM PEKAT */
+[data-testid="stFileUploaderDropzone"] svg {
+    fill: #000000 !important; /* HARUS HITAM PEKAT */
 }
 
+/* 🔥🔥🔥 PERBAIKAN KRITIS 2: Teks & Ikon file yang SUDAH DIUNGGAH harus PUTIH */
 
-/* --- KODE CSS LAINNYA TIDAK BERUBAH --- */
+/* Memastikan teks yang melaporkan file yang sudah diunggah menjadi PUTIH */
+[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) > div > div > div > p {
+    color: white !important; /* Nama file: aadidas_ (24).jpg */
+}
+
+/* Memastikan ukuran file (KB/MB) yang diunggah menjadi PUTIH */
+[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) > div > div > div > small {
+    color: white !important; /* Ukuran file: 44.1KB */
+}
+/* Memastikan ikon file yang sudah diunggah (ikon dokumen) menjadi PUTIH MURNI */
+[data-testid="stFileUploader"] [data-testid="stFileUploaderFilename"] svg {
+    fill: #FFFFFF !important; /* IKON PUTIH MURNI */
+}
+
+/* --- KODE CSS LAINNYA --- */
 [data-testid="stSidebar"] {
     background: rgba(15, 15, 25, 0.95);
     backdrop-filter: blur(10px);
@@ -128,6 +139,11 @@ h1, h2, h3 {
 }
 [data-testid="stSidebar"] * { color: white !important; }
 
+/* FIX: Target label st.file_uploader (Label "Unggah Gambar" di luar kotak) */
+[data-testid="stFileUploader"] label p {
+    color: #f0f0f0 !important; /* tetap putih */
+    font-size: 1.1em; 
+}
 
 .lottie-center {
     display: flex;
@@ -163,13 +179,7 @@ h1, h2, h3 {
     margin: 15px auto;
 }
 
-/* FIX: Target label st.file_uploader (Label "Unggah Gambar" di luar kotak) */
-[data-testid="stFileUploader"] label p {
-    color: #f0f0f0 !important; /* tetap putih */
-    font-size: 1.1em; 
-}
-
-/* FIX: Target Tombol "Browse Files" di dalam st.file_uploader */
+/* FIX: Tombol "Browse Files" di dalam st.file_uploader */
 [data-testid="stFileUploader"] button {
     background-color: #334466; 
     color: white !important;
@@ -202,7 +212,6 @@ h1, h2, h3 {
 
 
 /* Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
-/* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
     background-color: rgba(40, 40, 60, 0.8) !important; 
     color: white !important;
@@ -210,7 +219,6 @@ h1, h2, h3 {
     border-radius: 8px !important; 
 }
 
-/* FIX: Memastikan label "Pilih Lagu:" terlihat putih */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] label p {
     color: white !important;
     font-weight: normal !important;
@@ -254,7 +262,7 @@ div[role="option"][aria-selected="true"] {
 """, unsafe_allow_html=True)
 
 # =========================
-# FUNGSI DAN LOGIKA UTAMA
+# FUNGSI DAN LOGIKA UTAMA (TIDAK BERUBAH)
 # =========================
 def load_lottie_url(url):
     try:
@@ -299,7 +307,6 @@ elif st.session_state.page == "dashboard":
 
     # =========================
     # SISTEM MUSIK (DI DALAM SIDEBAR)
-    # (TIDAK BERUBAH)
     # =========================
     music_folder = "music"
 
@@ -353,7 +360,6 @@ elif st.session_state.page == "dashboard":
 
     # =========================
     # KONTROL MODE AI (DI DALAM SIDEBAR)
-    # (TIDAK BERUBAH)
     # =========================
     st.sidebar.header("🧠 Mode AI")
     mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
@@ -421,9 +427,8 @@ elif st.session_state.page == "dashboard":
                         detection_counts[final_class_name] = 1
                 
                 summary_list = []
-                # 🔥 PERBAIKAN DI SINI: Hanya tambahkan nama objek tanpa hitungan atau tanda bintang
+                # Perbaikan: Hanya tampilkan nama objek saja, tanpa hitungan atau format Markdown yang berlebihan
                 for name, count in detection_counts.items():
-                    # Menghilangkan tanda bintang, kurung, dan angka
                     summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
