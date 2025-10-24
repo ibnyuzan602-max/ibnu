@@ -272,24 +272,30 @@ elif st.session_state.page == "dashboard":
                     class_id = int(box.cls[0])
                     
                     # Menggunakan nama kelas yang diambil dari model
-                    class_name = YOLO_CLASS_NAMES.get(class_id, f"Kelas Tidak Dikenal") 
+                    raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    if class_name in detection_counts:
-                        detection_counts[class_name] += 1
+                    # === PERBAIKAN: MEMBERSHKAN NAMA KELAS ===
+                    # Membersihkan karakter Markdown (seperti **) dan spasi ekstra
+                    clean_name = raw_class_name.strip().replace('**', '')
+                    final_class_name = clean_name.strip()
+                    
+                    if final_class_name in detection_counts:
+                        detection_counts[final_class_name] += 1
                     else:
-                        detection_counts[class_name] = 1
+                        detection_counts[final_class_name] = 1
                 
-                # Membuat ringkasan HTML
+                # Membuat ringkasan HTML/Markdown yang hanya menampilkan nama dan jumlah.
                 summary_list = []
                 for name, count in detection_counts.items():
-                    summary_list.append(f"<li>**{name}**: {count} objek</li>")
+                    # Format yang bersih: **NamaObjeck**: Jumlah
+                    summary_list.append(f"- **{name}**: {count}")
                 
                 summary_html = f"""
                 <div class="detection-summary">
                     <h4>🔍 Ringkasan Objek Terdeteksi</h4>
-                    <ul>
-                        {''.join(summary_list)}
-                    </ul>
+                    <p>
+                        {'<br>'.join(summary_list)}
+                    </p>
                     <p>Total Objek Terdeteksi: <b>{len(results[0].boxes)}</b></p>
                 </div>
                 """
@@ -317,7 +323,6 @@ elif st.session_state.page == "dashboard":
             try:
                 predicted_class_name = CLASS_NAMES[class_index]
             except IndexError:
-                # Jika indeks kelas di luar batas yang diharapkan
                 predicted_class_name = f"Kelas Tidak Dikenal (Indeks: {class_index})"
                 
             st.markdown(f"""
