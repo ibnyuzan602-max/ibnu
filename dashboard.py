@@ -116,15 +116,21 @@ h1, h2, h3 {
 
 /* 🔥🔥🔥 PERBAIKAN KRITIS 2: Teks & Ikon file yang SUDAH DIUNGGAH harus PUTIH */
 
-/* Memastikan teks yang melaporkan file yang sudah diunggah menjadi PUTIH */
-[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) > div > div > div > p {
-    color: white !important; /* Nama file: aadidas_ (24).jpg */
+/* Menargetkan Nama File (di dalam p) */
+[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) p {
+    color: #FFFFFF !important; 
 }
 
-/* Memastikan ukuran file (KB/MB) yang diunggah menjadi PUTIH */
-[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) > div > div > div > small {
-    color: white !important; /* Ukuran file: 44.1KB */
+/* Menargetkan Ukuran File (di dalam small) */
+[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) small {
+    color: #FFFFFF !important; 
 }
+
+/* Penargetan tambahan untuk memastikan teks di dalam span juga putih (jika Streamlit menggunakan span) */
+[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) span {
+    color: #FFFFFF !important; 
+}
+
 /* Memastikan ikon file yang sudah diunggah (ikon dokumen) menjadi PUTIH MURNI */
 [data-testid="stFileUploader"] [data-testid="stFileUploaderFilename"] svg {
     fill: #FFFFFF !important; /* IKON PUTIH MURNI */
