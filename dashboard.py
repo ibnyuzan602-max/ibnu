@@ -97,23 +97,23 @@ h1, h2, h3 {
 }
 
 
-/* 🔥 FIX BARU: Teks pada st.file_uploader dipertahankan agar terlihat (putih keabu-abuan) */
+/* 🔥 FIX BARU: Teks pada st.file_uploader menjadi Abu-abu Gelap agar JELAS */
 
-/* Pastikan area dropzone itu sendiri tetap putih/abu-abu terang */
+/* Pastikan area dropzone itu sendiri Putih Murni */
 [data-testid="stFileUploaderDropzone"] {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border-color: #ddd !important; /* Border abu-abu terang */
+    background-color: #FFFFFF !important; /* Putih Murni */
+    border-color: #BBBBBB !important; /* Border abu-abu terang */
 }
 
 [data-testid="stFileUploader"] > div > div > div > div > p { /* Menargetkan "Drag and drop file here" */
-    color: #444444 !important; /* Abu-abu gelap agar kontras di latar putih */
+    color: #333333 !important; /* Abu-abu Gelap */
 }
 [data-testid="stFileUploader"] > div > div > div > div > small { /* Menargetkan "Limit 200MB..." */
-    color: #888888 !important; /* Abu-abu lebih terang */
+    color: #555555 !important; /* Abu-abu Sedang */
 }
-/* Menargetkan ikon upload menjadi abu-abu gelap juga */
+/* Menargetkan ikon upload menjadi Abu-abu Gelap */
 [data-testid="stFileUploader"] svg {
-    fill: #444444 !important; /* Abu-abu gelap */
+    fill: #333333 !important; /* Abu-abu Gelap */
 }
 
 
