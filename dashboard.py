@@ -28,16 +28,16 @@ st.set_page_config(
 # =========================
 st.markdown("""
 <style>
-/* Animasi Starfield */
+/* 🔥 ANIMASI STARFIELD DIHIDUPKAN KEMBALI 🔥 */
 @keyframes move-background {
     from {
         background-position: 0 0;
     }
     to {
-        background-position: 10000px 10000px; /* Jarak pergerakan besar untuk efek cepat */
+        /* Nilai besar untuk efek bergerak/terbang */
+        background-position: 10000px 10000px; 
     }
 }
-/* Efek bintang dengan box-shadow */
 .starfield {
     width: 100%;
     height: 100%;
@@ -45,11 +45,11 @@ st.markdown("""
     top: 0;
     left: 0;
     z-index: -1; /* Pastikan di belakang semua konten */
-    /* Membuat banyak bintang kecil putih dengan box-shadow */
-    background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><filter id="f1" x="0" y="0" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="0.5" /></filter></defs><rect width="100%" height="100%" fill="black" /><circle cx="10" cy="10" r="1" fill="white" /><circle cx="50" cy="150" r="1" fill="white" /><circle cx="150" cy="50" r="1" fill="white" /><circle cx="200" cy="200" r="1" fill="white" /><circle cx="300" cy="50" r="1" fill="white" /><circle cx="400" cy="100" r="1" fill="white" /></svg>');
+    /* Membuat banyak bintang kecil putih dengan background image berulang */
+    background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="transparent" /><circle cx="10" cy="10" r="1" fill="white" /><circle cx="50" cy="150" r="1" fill="white" /><circle cx="150" cy="50" r="1" fill="white" /><circle cx="200" cy="200" r="1" fill="white" /><circle cx="300" cy="50" r="1" fill="white" /><circle cx="400" cy="100" r="1" fill="white" /></svg>');
     background-size: 500px 500px;
-    animation: move-background 100s linear infinite;
-    opacity: 0.5; /* Kurangi opacity agar tidak terlalu mengganggu */
+    animation: move-background 100s linear infinite; /* Animasi bergerak lambat */
+    opacity: 0.5; 
 }
 
 [data-testid="stAppViewContainer"] {
@@ -296,7 +296,7 @@ elif st.session_state.page == "dashboard":
                     format='audio/mp3',
                 )
                 
-                st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
+                # Kotak catatan tetap dihapus
             
     else:
         st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
