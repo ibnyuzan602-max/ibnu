@@ -183,7 +183,7 @@ if os.path.exists(music_folder):
             )
             
             # Keterangan untuk pengguna tentang fitur loop yang hilang
-            st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
+            st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
         
 else:
     st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
