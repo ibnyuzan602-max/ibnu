@@ -24,54 +24,78 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (SOLUSI BARU STARFIELD ANIMATION)
+# CSS DARK FUTURISTIK (FIX TEKS PUTIH DAN STARFIELD PERMANEN)
 # =========================
 st.markdown("""
 <style>
-/* Keyframes untuk pergerakan latar belakang */
+/* Keyframes untuk pergerakan latar belakang (TIDAK DIHAPUS) */
 @keyframes move-background {
     from {
-        /* Mulai dari posisi 0 */
         background-position: 0 0;
     }
     to {
-        /* Bergerak jauh, memberi efek terbang/scrolling */
         background-position: 10000px 10000px; 
     }
 }
 
-/* Container utama Streamlit sebagai latar belakang */
+/* Container utama Streamlit sebagai latar belakang (STARFIELD PERMANEN) */
 [data-testid="stAppViewContainer"] {
-    /* Latar belakang utama: warna dasar gelap */
     background: 
-        /* 1. Starfield Layer 1: Bintang kecil, gerak lambat */
+        /* Starfield Layers */
         radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 150px 20px, #ddd, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 200px 150px, #eee, rgba(0,0,0,0)),
         radial-gradient(1px 1px at 80px 100px, #ccc, rgba(0,0,0,0)),
-        
-        /* 2. Starfield Layer 2: Bintang medium, gerak sedang */
         radial-gradient(3px 3px at 300px 120px, #fff, rgba(0,0,0,0)),
         radial-gradient(3px 3px at 450px 80px, #eee, rgba(0,0,0,0)),
-        
-        /* 3. Starfield Layer 3: Bintang besar/fokus, gerak cepat */
         radial-gradient(4px 4px at 500px 50px, #fff, rgba(0,0,0,0)),
-        
-        /* 4. Latar belakang dasar gelap */
+        /* Latar belakang dasar gelap */
         radial-gradient(circle at 10% 20%, #0b0b17, #1b1b2a 80%);
 
     background-size: 500px 500px, 500px 500px, 500px 500px, 500px 500px, 500px 500px, 
                      500px 500px, 500px 500px, 
                      500px 500px,
-                     100% 100%; /* Latar belakang gelap full size */
+                     100% 100%; 
 
-    background-repeat: repeat; /* Ulangi pola bintang */
-    
-    /* Terapkan animasi pergerakan pada lapisan bintang */
+    background-repeat: repeat;
     animation: move-background 100s linear infinite; 
     color: white;
 }
+
+/* 🔥 FIX UTAMA: Memaksa warna teks menjadi putih terang untuk SEMUA konten di halaman utama */
+[data-testid="stAppViewContainer"] p, 
+[data-testid="stAppViewContainer"] div, 
+[data-testid="stAppViewContainer"] label,
+[data-testid="stAppViewContainer"] span {
+    color: white !important;
+}
+
+/* FIX HEADING: Memastikan semua judul putih */
+h1, h2, h3 {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    color: white !important; 
+}
+
+/* 🔥 FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
+/* Menargetkan kontainer konten utama Streamlit agar transparan */
+[data-testid="stBlock"] { 
+    background-color: transparent !important; 
+    color: white !important;
+}
+
+/* Menargetkan kontainer di halaman awal (tempat Lottie berada) agar transparan */
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {
+    background-color: transparent !important;
+}
+/* Memastikan setiap blok konten transparan */
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:first-child,
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(2) > div:first-child,
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(3) {
+    background-color: transparent !important;
+}
+
 
 /* --- KODE CSS LAINNYA TIDAK BERUBAH --- */
 [data-testid="stSidebar"] {
@@ -82,10 +106,7 @@ st.markdown("""
 }
 [data-testid="stSidebar"] * { color: white !important; }
 
-h1, h2, h3 {
-    text-align: center;
-    font-family: 'Poppins', sans-serif;
-}
+
 .lottie-center {
     display: flex;
     justify-content: center;
@@ -161,9 +182,9 @@ h1, h2, h3 {
 /* Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
 /* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
-    background-color: rgba(40, 40, 60, 0.8) !important; /* Latar Belakang Gelap */
+    background-color: rgba(40, 40, 60, 0.8) !important; 
     color: white !important;
-    border-color: #556688 !important; /* Border Tipis Abu-abu Tua */
+    border-color: #556688 !important; 
     border-radius: 8px !important; 
 }
 
@@ -244,6 +265,7 @@ if st.session_state.page == "home":
     st.markdown("<h1 style='text-align:center;'>🤖 Selamat Datang di AI Vision Pro</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;'>Sistem Cerdas untuk Deteksi Objek dan Klasifikasi Gambar</p>", unsafe_allow_html=True)
     
+    # Konten Lottie
     lottie = load_lottie_url(LOTTIE_WELCOME)
     if lottie:
         st.markdown("<div class='lottie-center'>", unsafe_allow_html=True)
@@ -359,13 +381,13 @@ elif st.session_state.page == "dashboard":
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
-        # 🔥 PERBAIKAN: Konversi eksplisit ke RGB untuk mencegah InvalidArgumentError
+        # PERBAIKAN: Konversi eksplisit ke RGB
         try:
             if img.mode != 'RGB':
                 img = img.convert('RGB')
         except Exception as e:
             st.error(f"Gagal mengonversi gambar ke RGB: {e}. Harap coba dengan file gambar lain.")
-            st.stop() # Hentikan proses jika gagal konversi.
+            st.stop() 
         
         st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
         
@@ -387,6 +409,8 @@ elif st.session_state.page == "dashboard":
                 for box in results[0].boxes:
                     class_id = int(box.cls[0])
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
+                    
+                    # Membersihkan nama kelas
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -397,13 +421,13 @@ elif st.session_state.page == "dashboard":
                 
                 summary_list = []
                 for name, count in detection_counts.items():
-                    summary_list.append(f"- {name} ({count} objek)") 
+                    summary_list.append(f"- **{name}** ({count} objek)") 
                 
                 summary_html = f"""
                 <div class="detection-summary">
                     <h4>🔍 Ringkasan Objek Terdeteksi</h4>
                     <p>Jenis objek yang terdeteksi:</p>
-                    <p>
+                    <p style="color: #00b4d8; font-weight: bold;">
                         {'<br>'.join(summary_list)}
                     </p>
                     <p>Total Objek Terdeteksi: <b>{len(results[0].boxes)}</b></p>
@@ -422,12 +446,10 @@ elif st.session_state.page == "dashboard":
         elif mode == "Klasifikasi Gambar":
             st.info("🧠 Menjalankan klasifikasi gambar...")
             
-            # Pastikan img_resized dan img_array menggunakan gambar RGB yang sudah dikonversi
             img_resized = img.resize((128, 128))
             img_array = image.img_to_array(img_resized)
             img_array = np.expand_dims(img_array, axis=0) / 255.0
             
-            # 🔥 BARIS INI TEMPAT ERROR TERJADI, SEHARUSNYA SUDAH TERPERBAIKI DENGAN KONVERSI RGB
             prediction = classifier.predict(img_array, verbose=0) 
             class_index = np.argmax(prediction)
             confidence = np.max(prediction)
@@ -440,8 +462,8 @@ elif st.session_state.page == "dashboard":
             st.markdown(f"""
             <div class="result-card">
                 <h3>🧾 Hasil Prediksi</h3>
-                <p><b>Kelas:</b> {predicted_class_name}</p>
-                <p><b>Akurasi:</b> {confidence:.2%}</p>
+                <p><b>Kelas:</b> <span style="color: #00b4d8;">{predicted_class_name}</span></p>
+                <p><b>Akurasi:</b> <span style="color: #00b4d8;">{confidence:.2%}</span></p>
             </div>
             """, unsafe_allow_html=True)
         
