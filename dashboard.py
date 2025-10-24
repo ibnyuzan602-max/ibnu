@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX MENU DROP-DOWN BIRU NEON)
+# CSS DARK FUTURISTIK (DENGAN FIX TERBARU)
 # =========================
 st.markdown("""
 <style>
@@ -115,28 +115,27 @@ h1, h2, h3 {
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 
-/* FIX: Gaya untuk latar belakang nama lagu di sidebar */
+/* 🔥 PERBAIKAN: Gaya untuk latar belakang nama lagu yang sedang diputar */
 .music-title-box {
     background-color: rgba(40, 40, 60, 0.8);
     color: #00b4d8 !important; 
-    padding: 10px;
-    border-radius: 8px;
+    padding: 15px; /* Menambah padding agar lebih besar */
+    border-radius: 10px; /* Menambah radius agar lebih bulat */
     margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 15px;
+    margin-bottom: 20px; /* Jarak ke player di bawahnya */
+    font-size: 16px;
     font-weight: bold;
     border: 1px solid #556688;
 }
 
 /* FIX: Selectbox Lagu - Kotak Display */
-[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] input {
-    background-color: rgba(40, 40, 60, 0.8) !important;
-    color: white !important;
-}
-[data-testid="stSidebar"] [data-baseweb="select"] > div:first-child {
+[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
     background-color: rgba(40, 40, 60, 0.8) !important;
     color: white !important;
     border-color: #556688 !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] input {
+    color: white !important;
 }
 [data-testid="stSidebar"] [data-baseweb="select"] span {
     color: white !important;
@@ -146,7 +145,7 @@ h1, h2, h3 {
 div[data-baseweb="popover"] {
     background-color: rgba(15, 15, 25, 1) !important; 
     border: 1px solid #556688 !important;
-    border-radius: 8px;
+    border-radius: 8px !important;
 }
 
 /* FIX: Menu Dropdown (List Pilihan) - Item Default */
@@ -155,19 +154,18 @@ div[role="option"] {
     color: white !important; 
 }
 
-/* 🔥 PERBAIKAN UTAMA: Menu Dropdown (List Pilihan) - Item Hover/Pilih */
-/* Menggunakan warna biru neon yang menyala seperti tombol Anda */
+/* FIX: Menu Dropdown (List Pilihan) - Item Hover/Pilih DENGAN !important */
 div[role="option"]:hover {
-    background-color: #0077b6 !important; /* Biru Neon yang sama dengan tombol utama */
-    color: white !important; /* Pastikan teks tetap putih di atas latar biru */
-    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5); /* Efek menyala saat di-hover */
+    background-color: #0077b6 !important; 
+    color: white !important; 
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5) !important; 
+    border-radius: 8px !important;
 }
-
-/* Tambahan: Mengubah warna saat item dipilih (selected) */
 div[role="option"][aria-selected="true"] {
     background-color: #0077b6 !important; 
     color: white !important;
-    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5); 
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5) !important; 
+    border-radius: 8px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -246,7 +244,7 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
-            # Selectbox untuk memilih lagu (Tampilan kotak dan drop-down-nya gelap dan biru neon)
+            # Selectbox untuk memilih lagu
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:",
@@ -269,9 +267,8 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
-                # Nama lagu ditampilkan di atas pemutar audio dengan latar belakang yang jelas
+                # 🔥 PERBAIKAN DI SINI: Hanya menampilkan nama lagu di dalam div, tanpa teks "Sedang Memutar:"
                 st.sidebar.markdown(f"""
-                <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar:</p>
                 <div class="music-title-box">{st.session_state.current_music}</div>
                 """, unsafe_allow_html=True)
                 
