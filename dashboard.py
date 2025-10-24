@@ -106,7 +106,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (FINAL FIX MENGGUNAKAN st.audio)
+# SISTEM MUSIK (Final Fix untuk TypeError)
 # =========================
 music_folder = "music"
 
@@ -148,13 +148,12 @@ if os.path.exists(music_folder):
         except FileNotFoundError:
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
 
-        # GANTI st.markdown dengan st.audio()
+        # GANTI st.markdown dengan st.audio() dan HILANGKAN KEY
         if audio_bytes:
             st.sidebar.audio(
                 audio_bytes,
                 format='audio/mp3',
-                # Key di st.audio() memastikan widget di-reset saat nama lagu berubah
-                key=f"player_{st.session_state.current_music}"
+                # Parameter key DIHILANGKAN untuk menghindari TypeError di sidebar
             )
 
 else:
