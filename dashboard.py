@@ -24,54 +24,53 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DENGAN STARFIELD ANIMATION YANG DIPERBAIKI)
+# CSS DARK FUTURISTIK (SOLUSI BARU STARFIELD ANIMATION)
 # =========================
 st.markdown("""
 <style>
-/* 🔥 CSS ANIMASI STARFIELD YANG DIPERBAIKI 🔥 */
-
-/* Keyframes untuk pergerakan (efek terbang) */
-@keyframes star-move {
+/* Keyframes untuk pergerakan latar belakang */
+@keyframes move-background {
     from {
-        transform: translate(0, 0);
+        /* Mulai dari posisi 0 */
+        background-position: 0 0;
     }
     to {
-        /* Menggerakkan latar belakang secara diagonal */
-        transform: translate(1000px, 1000px); 
+        /* Bergerak jauh, memberi efek terbang/scrolling */
+        background-position: 10000px 10000px; 
     }
 }
 
 /* Container utama Streamlit sebagai latar belakang */
 [data-testid="stAppViewContainer"] {
     /* Latar belakang utama: warna dasar gelap */
-    background: radial-gradient(circle at 10% 20%, #0b0b17, #1b1b2a 80%);
-    color: white;
-    /* overflow-x: hidden; diperlukan agar pergerakan tidak membuat scrollbar horizontal */
-}
+    background: 
+        /* 1. Starfield Layer 1: Bintang kecil, gerak lambat */
+        radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 150px 20px, #ddd, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 200px 150px, #eee, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 80px 100px, #ccc, rgba(0,0,0,0)),
+        
+        /* 2. Starfield Layer 2: Bintang medium, gerak sedang */
+        radial-gradient(3px 3px at 300px 120px, #fff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 450px 80px, #eee, rgba(0,0,0,0)),
+        
+        /* 3. Starfield Layer 3: Bintang besar/fokus, gerak cepat */
+        radial-gradient(4px 4px at 500px 50px, #fff, rgba(0,0,0,0)),
+        
+        /* 4. Latar belakang dasar gelap */
+        radial-gradient(circle at 10% 20%, #0b0b17, #1b1b2a 80%);
 
-/* Menerapkan bintang dan animasi pada pseudo-element */
-[data-testid="stAppViewContainer"]:after {
-    content: "";
-    position: fixed; /* Penting agar tetap di tempat saat konten di-scroll */
-    top: 0;
-    left: 0;
-    width: 200%; /* Lebih besar dari viewport untuk pergerakan mulus */
-    height: 200%;
-    z-index: -1; 
+    background-size: 500px 500px, 500px 500px, 500px 500px, 500px 500px, 500px 500px, 
+                     500px 500px, 500px 500px, 
+                     500px 500px,
+                     100% 100%; /* Latar belakang gelap full size */
+
+    background-repeat: repeat; /* Ulangi pola bintang */
     
-    /* Box-shadow untuk menciptakan bintang */
-    box-shadow: 1px 1px #FFF, 2px 2px #FFF, 3px 3px #FFF, 4px 4px #FFF,
-                5px 5px #FFF, 6px 6px #FFF, 7px 7px #FFF, 8px 8px #FFF, 
-                9px 9px #FFF, 10px 10px #FFF, 11px 11px #FFF, 12px 12px #FFF, 
-                /* ... dan seterusnya. Untuk kesederhanaan, mari gunakan banyak random shadows */
-                0px 150px #FFF, 250px 200px #FFF, 300px 350px #FFF, 450px 10px #FFF,
-                600px 500px #FFF, 750px 250px #FFF, 850px 50px #FFF, 1000px 100px #FFF,
-                1100px 400px #FFF, 1250px 150px #FFF, 1400px 300px #FFF, 1550px 50px #FFF,
-                1700px 200px #FFF, 1850px 450px #FFF, 2000px 500px #FFF; /* Banyak bintang */
-    
-    background: transparent;
-    animation: star-move 200s linear infinite; /* Kecepatan lebih lambat agar tidak pusing */
-    opacity: 0.3; /* Sedikit redup */
+    /* Terapkan animasi pergerakan pada lapisan bintang */
+    animation: move-background 100s linear infinite; 
+    color: white;
 }
 
 /* --- KODE CSS LAINNYA TIDAK BERUBAH --- */
