@@ -28,7 +28,7 @@ st.set_page_config(
 # =========================
 st.markdown("""
 <style>
-/* Keyframes untuk pergerakan latar belakang (Starfield) */
+/* Keyframes untuk pergerakan latar belakang (TIDAK DIHAPUS) */
 @keyframes move-background {
     from {
         background-position: 0 0;
@@ -79,12 +79,25 @@ h1, h2, h3 {
 }
 
 /* FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
+/* Menargetkan kontainer konten utama Streamlit agar transparan */
 [data-testid="stBlock"] { 
     background-color: transparent !important; 
     color: white !important;
 }
 
-/* Sidebar styling */
+/* Menargetkan kontainer di halaman awal (tempat Lottie berada) agar transparan */
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {
+    background-color: transparent !important;
+}
+/* Memastikan setiap blok konten transparan */
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:first-child,
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(2) > div:first-child,
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(3) {
+    background-color: transparent !important;
+}
+
+
+/* --- KODE CSS LAINNYA TIDAK BERUBAH --- */
 [data-testid="stSidebar"] {
     background: rgba(15, 15, 25, 0.95);
     backdrop-filter: blur(10px);
@@ -134,6 +147,21 @@ h1, h2, h3 {
     font-size: 1.1em; 
 }
 
+/* FIX: Target Tombol "Browse Files" di dalam st.file_uploader */
+[data-testid="stFileUploader"] button {
+    background-color: #334466; 
+    color: white !important;
+    border: 1px solid #556688;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: none;
+    transition: all 0.2s;
+}
+
+[data-testid="stFileUploader"] button:hover {
+    background-color: #445577; 
+}
+
 /* FIX: Tombol di Halaman Awal & Kembali ke Halaman Awal */
 .stButton>button:first-child { 
     background-color: #0077b6; 
@@ -150,7 +178,7 @@ h1, h2, h3 {
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 
-/* 🔥 FINAL: Tombol Download Hasil Deteksi/Klasifikasi (Biru Neon) */
+/* 🔥 PENAMBAHAN: Tombol Download Hasil Deteksi/Klasifikasi (Biru Neon) */
 [data-testid="stDownloadButton"] > button {
     background-color: #0077b6; /* Warna latar belakang biru */
     color: white !important;
@@ -169,8 +197,8 @@ h1, h2, h3 {
 }
 /* END FINAL PERUBAHAN CSS */
 
-
 /* Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
+/* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
     background-color: rgba(40, 40, 60, 0.8) !important; 
     color: white !important;
@@ -178,18 +206,34 @@ h1, h2, h3 {
     border-radius: 8px !important; 
 }
 
+/* FIX: Memastikan label "Pilih Lagu:" terlihat putih */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] label p {
     color: white !important;
     font-weight: normal !important;
     display: block !important; 
 }
 
+[data-testid="stSidebar"] [data-baseweb="select"] input {
+    color: white !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] span {
+    color: white !important;
+}
+
+/* FIX: Menu Dropdown (List Pilihan) - Container */
 div[data-baseweb="popover"] {
     background-color: rgba(15, 15, 25, 1) !important; 
     border: 1px solid #556688 !important;
     border-radius: 8px !important;
 }
 
+/* FIX: Menu Dropdown (List Pilihan) - Item Default */
+div[role="option"] {
+    background-color: transparent !important;
+    color: white !important; 
+}
+
+/* FIX: Menu Dropdown (List Pilihan) - Item Hover/Pilih Biru Neon */
 div[role="option"]:hover {
     background-color: #0077b6 !important; 
     color: white !important; 
@@ -385,7 +429,7 @@ elif st.session_state.page == "dashboard":
                     class_id = int(box.cls[0])
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # Membersihkan nama kelas dari karakter tambahan
+                    # Membersihkan nama kelas
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -394,16 +438,16 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[final_class_name] = 1
                 
-                # Membangun daftar ringkasan hanya dengan nama objek unik (sesuai permintaan)
-                summary_list = [f"- {name}" for name in detection_counts.keys()]
+                # 🔥 PERUBAHAN: Membangun daftar ringkasan dalam format HTML (ul/li)
+                summary_list_html = "".join([f"<li>*{name}* ({count} objek)</li>" for name, count in detection_counts.items()])
                 
                 summary_html = f"""
                 <div class="detection-summary">
                     <h4>🔍 Ringkasan Objek Terdeteksi</h4>
                     <p>Jenis objek yang terdeteksi:</p>
-                    <p style="color: #00b4d8; font-weight: bold;">
-                        {'<br>'.join(summary_list)}
-                    </p>
+                    <ul style="color: #00b4d8; font-weight: bold; padding-left: 20px; list-style-type: none;">
+                        {summary_list_html}
+                    </ul>
                     <p>Total Objek Terdeteksi: <b>{len(results[0].boxes)}</b></p>
                 </div>
                 """
@@ -411,7 +455,7 @@ elif st.session_state.page == "dashboard":
             else:
                 st.info("Tidak ada objek yang terdeteksi dalam gambar ini.")
             
-            # Tombol Download Hasil Deteksi (PNG) - Biru Neon
+            # 🔥 PENAMBAHAN: Tombol Download Hasil Deteksi (PNG) - Biru Neon
             img_bytes = io.BytesIO()
             Image.fromarray(result_img).save(img_bytes, format="PNG")
             img_bytes.seek(0)
@@ -436,15 +480,6 @@ elif st.session_state.page == "dashboard":
             except IndexError:
                 predicted_class_name = f"Kelas Tidak Dikenal (Indeks: {class_index})"
                 
-            # SIAPKAN KONTEN TEKS HASIL KLASIFIKASI
-            classification_result_text = (
-                f"Nama File: {uploaded_file.name}\n"
-                f"Hasil Klasifikasi: {predicted_class_name}\n"
-                f"Akurasi/Probabilitas: {confidence:.2%}\n"
-                "------------------------------------\n"
-                "Ini adalah hasil klasifikasi gambar oleh AI Vision Pro."
-            )
-            
             # Menampilkan hasil di UI
             st.markdown(f"""
             <div class="result-card">
@@ -453,15 +488,23 @@ elif st.session_state.page == "dashboard":
                 <p><b>Akurasi:</b> <span style="color: #00b4d8;">{confidence:.2%}</span></p>
             </div>
             """, unsafe_allow_html=True)
-            
-            # TOMBOL DOWNLOAD HASIL KLASIFIKASI (TXT) - Biru Neon
+
+            # 🔥 PENAMBAHAN: SIAPKAN KONTEN TEKS HASIL KLASIFIKASI
+            classification_result_text = (
+                f"Nama File: {uploaded_file.name}\n"
+                f"Hasil Klasifikasi: {predicted_class_name}\n"
+                f"Akurasi/Probabilitas: {confidence:.2%}\n"
+                "------------------------------------\n"
+                "Ini adalah hasil klasifikasi gambar oleh AI Vision Pro."
+            )
+
+            # 🔥 PENAMBAHAN: TOMBOL DOWNLOAD HASIL KLASIFIKASI (TXT) - Biru Neon
             st.download_button(
                 label="📥 Download Hasil Klasifikasi (TXT)",
                 data=classification_result_text.encode('utf-8'), 
                 file_name=f"hasil_klasifikasi_{os.path.splitext(uploaded_file.name)[0]}.txt",
                 mime="text/plain"
             )
-            
 
     elif uploaded_file and (yolo_model is None or classifier is None):
         st.markdown("<div class='warning-box'>⚠ Model AI gagal dimuat. Harap periksa path model.</div>", unsafe_allow_html=True)
