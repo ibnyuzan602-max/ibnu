@@ -410,7 +410,7 @@ elif st.session_state.page == "dashboard":
                     class_id = int(box.cls[0])
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # Membersihkan nama kelas
+                    # Membersihkan nama kelas dari tanda bintang/karakter khusus di akhir
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -419,9 +419,11 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[final_class_name] = 1
                 
+                # --- PERUBAHAN DI SINI: Hanya memasukkan NAMA OBJEK ke dalam list ---
                 summary_list = []
-                for name, count in detection_counts.items():
-                    summary_list.append(f"- **{name}** ({count} objek)") 
+                for name in detection_counts.keys():
+                    # Hanya menambahkan nama objek ke dalam list tanpa hitungan atau format Markdown
+                    summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
                 <div class="detection-summary">
