@@ -106,7 +106,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (FIX: Non-Autoplay, Loop Aktif, Ganti Lagu dengan JS Load)
+# SISTEM MUSIK (FIX FINAL: Menggunakan st.audio() untuk Stabilitas Pemutaran)
 # =========================
 music_folder = "music"
 
@@ -121,7 +121,6 @@ if os.path.exists(music_folder):
 
         # --- INISIALISASI SESSION STATE YANG AMAN ---
         if "current_music" not in st.session_state:
-            # Pastikan file pertama ada, jika tidak, atur ke None
             st.session_state.current_music = music_files[0] if music_files else None
         # ---------------------------------------------
         
@@ -134,48 +133,35 @@ if os.path.exists(music_folder):
             key="music_selector"
         )
         
-        # Perbarui state dan panggil rerun HANYA jika lagu benar-benar berubah
+        # Perbarui state
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
-            # RERUN penting untuk me-render ulang konten base64 dan skrip JS
+            # RERUN penting untuk me-render ulang st.audio
             st.rerun() 
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
-        audio_b64 = ""
+        audio_bytes = None
         try:
-            # Mengubah data audio menjadi base64
+            # Buka file audio sebagai bytes
             with open(music_path, "rb") as f:
-                audio_data = f.read()
-                audio_b64 = base64.b64encode(audio_data).decode()
+                audio_bytes = f.read()
         except FileNotFoundError:
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
-            
-        # Menggunakan ID unik pada tag audio agar bisa diakses JS
-        unique_id = "custom_audio_player"
         
-        # Tag <audio>: 'loop' ADA (agar berulang), 'autoplay' DIHAPUS (agar manual)
-        audio_html = f"""
-        <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
-        <audio id="{unique_id}" controls loop style="width:100%">
-            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
-            Browser Anda tidak mendukung audio.
-        </audio>
-        """
-        st.sidebar.markdown(audio_html, unsafe_allow_html=True)
-
-        # 🔥 SUNTIKKAN JAVASCRIPT: Memaksa elemen audio me-reload sumber
-        js_script = f"""
-        <script>
-            var audioPlayer = document.getElementById("{unique_id}");
-            if (audioPlayer) {{
-                // Memuat ulang sumber audio baru secara eksplisit.
-                // Ini memaksa browser untuk membaca data Base64 baru
-                audioPlayer.load(); 
-            }}
-        </script>
-        """
-        st.sidebar.markdown(js_script, unsafe_allow_html=True)
+        # Menggunakan st.audio()
+        # Kekurangan: Tidak ada 'loop' otomatis dan 'autoplay' di sini.
+        # Solusi: Jika Anda ingin loop, Anda harus mengaktifkannya secara manual pada pemutar di browser.
+        if audio_bytes:
+            st.sidebar.markdown(f"""
+            <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
+            """, unsafe_allow_html=True)
+            
+            # st.audio() menyediakan pemutaran yang paling stabil untuk Streamlit
+            st.sidebar.audio(
+                audio_bytes,
+                format='audio/mp3',
+            )
         
 else:
     st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
