@@ -284,7 +284,7 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[final_class_name] = 1
                 
-                # Membuat ringkasan HTML/Markdown yang hanya menampilkan nama dan jumlah.
+                # Membuat ringkasan HTML/Markdown dengan keterangan baru
                 summary_list = []
                 for name, count in detection_counts.items():
                     # Format yang bersih: **NamaObjeck**: Jumlah
@@ -293,6 +293,7 @@ elif st.session_state.page == "dashboard":
                 summary_html = f"""
                 <div class="detection-summary">
                     <h4>🔍 Ringkasan Objek Terdeteksi</h4>
+                    <p>Objek yang terdeteksi adalah:</p>
                     <p>
                         {'<br>'.join(summary_list)}
                     </p>
