@@ -138,7 +138,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK
+# SISTEM MUSIK (PERBAIKAN UTAMA DI SINI)
 # =========================
 music_folder = "music"
 
@@ -153,33 +153,55 @@ if os.path.exists(music_folder):
 
         if "current_music" not in st.session_state:
             st.session_state.current_music = music_files[0]
-
+            st.session_state.music_key = time.time() # Key unik awal
+        
+        # Selectbox untuk memilih lagu
         selected_music = st.sidebar.selectbox(
             "Pilih Lagu:",
             options=music_files,
-            index=music_files.index(st.session_state.current_music)
+            index=music_files.index(st.session_state.current_music),
+            key="music_selector"
         )
-
+        
+        # Perbarui state hanya jika lagu benar-benar berubah
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
-            st.rerun()
+            # Ubah key untuk memaksa Streamlit merender ulang elemen <audio>
+            st.session_state.music_key = time.time() 
+            # Tidak perlu st.rerun() di sini, Streamlit akan menangani state perubahan
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
-        with open(music_path, "rb") as f:
-            audio_data = f.read()
-            audio_b64 = base64.b64encode(audio_data).decode()
+        try:
+            with open(music_path, "rb") as f:
+                audio_data = f.read()
+                audio_b64 = base64.b64encode(audio_data).decode()
+        except FileNotFoundError:
+            st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
+            audio_b64 = ""
 
+        # GUNAKAN KEY UNIK UNTUK MEMAKSA WIDGET AUDIO DI-RESET
+        # Ini akan memuat ulang elemen <audio> setiap kali lagu berubah, 
+        # sehingga lagu sebelumnya berhenti dan yang baru mulai.
         audio_html = f"""
-        <audio controls loop style="width:100%">
+        <audio controls loop autoplay style="width:100%">
             <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
             Browser Anda tidak mendukung audio.
         </audio>
         """
-        st.sidebar.markdown(audio_html, unsafe_allow_html=True)
+        # Kita juga menambahkan parameter autoplay="true" ke HTML
+        st.sidebar.markdown(
+            audio_html, 
+            unsafe_allow_html=True, 
+            key=f"audio_player_{st.session_state.music_key}"
+        )
 
 else:
     st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
+# =========================
+# AKHIR SISTEM MUSIK
+# =========================
+
 
 # =========================
 # HALAMAN 1: WELCOME
@@ -251,7 +273,7 @@ elif st.session_state.page == "dashboard":
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
-        # PERBAIKAN WARNING 1: Mengganti use_column_width
+        # PERBAIKAN WARNING: Mengganti use_column_width
         st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
         
         with st.spinner("🤖 AI sedang menganalisis gambar..."):
@@ -266,7 +288,6 @@ elif st.session_state.page == "dashboard":
             
             # Visualisasikan hasil
             result_img = results[0].plot()
-            # PERBAIKAN WARNING 2: Mengganti use_column_width
             st.image(result_img, caption="🎯 Hasil Deteksi", use_container_width=True)
             
             # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (Hanya Nama Objek)
