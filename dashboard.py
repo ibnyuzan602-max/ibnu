@@ -138,7 +138,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (PERBAIKAN UTAMA DI SINI)
+# SISTEM MUSIK (Diperbaiki dari AttributeError)
 # =========================
 music_folder = "music"
 
@@ -151,9 +151,13 @@ if os.path.exists(music_folder):
     else:
         st.sidebar.markdown("#### 🎧 Player Musik")
 
+        # --- INISIALISASI SESSION STATE YANG AMAN ---
         if "current_music" not in st.session_state:
             st.session_state.current_music = music_files[0]
-            st.session_state.music_key = time.time() # Key unik awal
+            
+        if "music_key" not in st.session_state:
+             st.session_state.music_key = time.time()
+        # ---------------------------------------------
         
         # Selectbox untuk memilih lagu
         selected_music = st.sidebar.selectbox(
@@ -168,7 +172,8 @@ if os.path.exists(music_folder):
             st.session_state.current_music = selected_music
             # Ubah key untuk memaksa Streamlit merender ulang elemen <audio>
             st.session_state.music_key = time.time() 
-            # Tidak perlu st.rerun() di sini, Streamlit akan menangani state perubahan
+            # Force rerun untuk memastikan semua widget player musik di-update segera
+            st.rerun() 
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
@@ -181,15 +186,12 @@ if os.path.exists(music_folder):
             audio_b64 = ""
 
         # GUNAKAN KEY UNIK UNTUK MEMAKSA WIDGET AUDIO DI-RESET
-        # Ini akan memuat ulang elemen <audio> setiap kali lagu berubah, 
-        # sehingga lagu sebelumnya berhenti dan yang baru mulai.
         audio_html = f"""
         <audio controls loop autoplay style="width:100%">
             <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
             Browser Anda tidak mendukung audio.
         </audio>
         """
-        # Kita juga menambahkan parameter autoplay="true" ke HTML
         st.sidebar.markdown(
             audio_html, 
             unsafe_allow_html=True, 
@@ -248,21 +250,20 @@ elif st.session_state.page == "dashboard":
     st.sidebar.markdown("---")
     
     # DEFINISI NAMA KELAS KLASIFIKASI (Keras)
-    # Mapping: 0 = Kucing, 1 = Anjing, 2 = Manusia
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
 
     @st.cache_resource
     def load_models():
         try:
+            # Pastikan path model ini benar
             yolo_model = YOLO(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 4.pt"))
             classifier = tf.keras.models.load_model(os.path.join("model", "Ibnu Hawari Yuzan_Laporan 2.h5"))
             
-            # AMBIL NAMA KELAS YOLO SECARA DINAMIS DARI MODEL
             yolo_names = yolo_model.names 
             
             return yolo_model, classifier, yolo_names
         except Exception as e:
-            st.warning(f"⚠ Gagal memuat model: {e}")
+            st.warning(f"⚠ Gagal memuat model. Pastikan file model ada di folder 'model/'. Error: {e}")
             return None, None, {}
 
     # Tangkap model dan nama kelas YOLO
@@ -273,7 +274,7 @@ elif st.session_state.page == "dashboard":
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
-        # PERBAIKAN WARNING: Mengganti use_column_width
+        # Perbaikan Warning Streamlit: use_container_width
         st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
         
         with st.spinner("🤖 AI sedang menganalisis gambar..."):
@@ -288,19 +289,19 @@ elif st.session_state.page == "dashboard":
             
             # Visualisasikan hasil
             result_img = results[0].plot()
+            # Perbaikan Warning Streamlit: use_container_width
             st.image(result_img, caption="🎯 Hasil Deteksi", use_container_width=True)
             
-            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (Hanya Nama Objek)
+            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (DISEMPURNAKAN)
             detection_counts = {}
             
             if results and len(results[0].boxes) > 0:
                 for box in results[0].boxes:
                     class_id = int(box.cls[0])
                     
-                    # Menggunakan nama kelas yang diambil dari model
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
-                    # Membersihkan nama kelas dari tanda baca/Markdown/angka
+                    # Pembersihan nama kelas dari tanda baca/Markdown/angka
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -312,7 +313,7 @@ elif st.session_state.page == "dashboard":
                 # Membuat ringkasan HTML/Markdown dengan format sederhana
                 summary_list = []
                 for name, count in detection_counts.items():
-                    # Format yang paling sederhana: hanya nama objek (tanpa angka jumlah objek)
+                    # Format final: Hanya nama objek (tanpa bold, tanpa angka count)
                     summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
@@ -345,7 +346,7 @@ elif st.session_state.page == "dashboard":
             class_index = np.argmax(prediction)
             confidence = np.max(prediction)
             
-            # MENDAPATKAN NAMA KELAS DARI INDEKS (0=Kucing, 1=Anjing, 2=Manusia)
+            # MENDAPATKAN NAMA KELAS DARI INDEKS
             try:
                 predicted_class_name = CLASS_NAMES[class_index]
             except IndexError:
