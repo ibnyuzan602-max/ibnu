@@ -115,25 +115,22 @@ h1, h2, h3 {
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 
-/* 🔥 PERBAIKAN: Gaya untuk latar belakang nama lagu yang sedang diputar */
-.music-title-box {
-    background-color: rgba(40, 40, 60, 0.8);
-    color: #00b4d8 !important; 
-    padding: 15px; /* Menambah padding agar lebih besar */
-    border-radius: 10px; /* Menambah radius agar lebih bulat */
-    margin-top: 10px;
-    margin-bottom: 20px; /* Jarak ke player di bawahnya */
-    font-size: 16px;
-    font-weight: bold;
-    border: 1px solid #556688;
-}
-
+/* 🔥 Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
 /* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
-    background-color: rgba(40, 40, 60, 0.8) !important;
+    background-color: rgba(40, 40, 60, 0.8) !important; /* Latar Belakang Gelap */
     color: white !important;
-    border-color: #556688 !important;
+    border-color: #556688 !important; /* Border Tipis Abu-abu Tua */
+    border-radius: 8px !important; 
 }
+
+/* FIX: Memastikan label "Pilih Lagu:" terlihat putih */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] label p {
+    color: white !important;
+    font-weight: normal !important;
+    display: block !important; 
+}
+
 [data-testid="stSidebar"] [data-baseweb="select"] input {
     color: white !important;
 }
@@ -154,7 +151,7 @@ div[role="option"] {
     color: white !important; 
 }
 
-/* FIX: Menu Dropdown (List Pilihan) - Item Hover/Pilih DENGAN !important */
+/* FIX: Menu Dropdown (List Pilihan) - Item Hover/Pilih Biru Neon */
 div[role="option"]:hover {
     background-color: #0077b6 !important; 
     color: white !important; 
@@ -244,10 +241,10 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
-            # Selectbox untuk memilih lagu
+            # Label "Pilih Lagu:" dipertahankan
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
-                "Pilih Lagu:",
+                "Pilih Lagu:", 
                 options=music_files,
                 index=current_index,
                 key="music_selector"
@@ -267,10 +264,7 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
-                # 🔥 PERBAIKAN DI SINI: Hanya menampilkan nama lagu di dalam div, tanpa teks "Sedang Memutar:"
-                st.sidebar.markdown(f"""
-                <div class="music-title-box">{st.session_state.current_music}</div>
-                """, unsafe_allow_html=True)
+                # Blok "music-title-box" yang berwarna biru neon telah dihapus
                 
                 # Pemutar audio bawaan Streamlit
                 st.sidebar.audio(
@@ -278,7 +272,6 @@ elif st.session_state.page == "dashboard":
                     format='audio/mp3',
                 )
                 
-                st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
             
     else:
         st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
