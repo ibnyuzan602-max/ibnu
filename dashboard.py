@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (SEMUA PERBAIKAN)
+# CSS DARK FUTURISTIK (FIX TEKS PUTIH DAN STARFIELD PERMANEN)
 # =========================
 st.markdown("""
 <style>
@@ -63,9 +63,9 @@ st.markdown("""
     color: white;
 }
 
-/* Memaksa warna teks menjadi putih terang untuk SEMUA konten KECUALI yang spesifik */
+/* 🔥 FIX UTAMA: Memaksa warna teks menjadi putih terang untuk SEMUA konten di halaman utama */
 [data-testid="stAppViewContainer"] p, 
-[data-testid="stAppViewContainer"] div:not([data-testid="stFileUploader"] *) , 
+[data-testid="stAppViewContainer"] div, 
 [data-testid="stAppViewContainer"] label,
 [data-testid="stAppViewContainer"] span {
     color: white !important;
@@ -78,65 +78,26 @@ h1, h2, h3 {
     color: white !important; 
 }
 
-/* FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
+/* 🔥 FIX KONTEN PUTIH: Menghilangkan latar belakang putih di semua blok konten Streamlit */
+/* Menargetkan kontainer konten utama Streamlit agar transparan */
 [data-testid="stBlock"] { 
     background-color: transparent !important; 
     color: white !important;
 }
 
+/* Menargetkan kontainer di halaman awal (tempat Lottie berada) agar transparan */
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {
     background-color: transparent !important;
 }
+/* Memastikan setiap blok konten transparan */
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:first-child,
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(2) > div:first-child,
 [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div:nth-child(3) {
     background-color: transparent !important;
 }
 
-/* 🔥🔥🔥 PERBAIKAN KRITIS 1: Teks pada st.file_uploader (Dropzone) harus HITAM PEKAT */
 
-/* Pastikan area dropzone itu sendiri Putih Murni */
-[data-testid="stFileUploaderDropzone"] {
-    background-color: #FFFFFF !important; /* Putih Murni */
-    border-color: #BBBBBB !important; 
-}
-
-/* Menargetkan teks "Drag and drop file here" */
-[data-testid="stFileUploaderDropzone"] p { 
-    color: #000000 !important; /* HARUS HITAM PEKAT */
-}
-/* Menargetkan teks "Limit 200MB..." */
-[data-testid="stFileUploaderDropzone"] small { 
-    color: #000000 !important; /* HARUS HITAM PEKAT */
-}
-/* Menargetkan ikon upload menjadi HITAM PEKAT */
-[data-testid="stFileUploaderDropzone"] svg {
-    fill: #000000 !important; /* HARUS HITAM PEKAT */
-}
-
-/* 🔥🔥🔥 PERBAIKAN KRITIS 2: Teks & Ikon file yang SUDAH DIUNGGAH harus PUTIH */
-
-/* Menargetkan Nama File (di dalam p) */
-[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) p {
-    color: #FFFFFF !important; 
-}
-
-/* Menargetkan Ukuran File (di dalam small) */
-[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) small {
-    color: #FFFFFF !important; 
-}
-
-/* Penargetan tambahan untuk memastikan teks di dalam span juga putih (jika Streamlit menggunakan span) */
-[data-testid="stFileUploader"] > div > div > div > div:nth-child(2) span {
-    color: #FFFFFF !important; 
-}
-
-/* Memastikan ikon file yang sudah diunggah (ikon dokumen) menjadi PUTIH MURNI */
-[data-testid="stFileUploader"] [data-testid="stFileUploaderFilename"] svg {
-    fill: #FFFFFF !important; /* IKON PUTIH MURNI */
-}
-
-/* --- KODE CSS LAINNYA --- */
+/* --- KODE CSS LAINNYA TIDAK BERUBAH --- */
 [data-testid="stSidebar"] {
     background: rgba(15, 15, 25, 0.95);
     backdrop-filter: blur(10px);
@@ -145,11 +106,6 @@ h1, h2, h3 {
 }
 [data-testid="stSidebar"] * { color: white !important; }
 
-/* FIX: Target label st.file_uploader (Label "Unggah Gambar" di luar kotak) */
-[data-testid="stFileUploader"] label p {
-    color: #f0f0f0 !important; /* tetap putih */
-    font-size: 1.1em; 
-}
 
 .lottie-center {
     display: flex;
@@ -185,7 +141,13 @@ h1, h2, h3 {
     margin: 15px auto;
 }
 
-/* FIX: Tombol "Browse Files" di dalam st.file_uploader */
+/* FIX: Target label st.file_uploader */
+[data-testid="stFileUploader"] label p {
+    color: #f0f0f0 !important; 
+    font-size: 1.1em; 
+}
+
+/* FIX: Target Tombol "Browse Files" di dalam st.file_uploader */
 [data-testid="stFileUploader"] button {
     background-color: #334466; 
     color: white !important;
@@ -218,6 +180,7 @@ h1, h2, h3 {
 
 
 /* Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
+/* FIX: Selectbox Lagu - Kotak Display */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {
     background-color: rgba(40, 40, 60, 0.8) !important; 
     color: white !important;
@@ -225,6 +188,7 @@ h1, h2, h3 {
     border-radius: 8px !important; 
 }
 
+/* FIX: Memastikan label "Pilih Lagu:" terlihat putih */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] label p {
     color: white !important;
     font-weight: normal !important;
@@ -268,7 +232,7 @@ div[role="option"][aria-selected="true"] {
 """, unsafe_allow_html=True)
 
 # =========================
-# FUNGSI DAN LOGIKA UTAMA (TIDAK BERUBAH)
+# FUNGSI LOAD LOTTIE
 # =========================
 def load_lottie_url(url):
     try:
@@ -279,17 +243,29 @@ def load_lottie_url(url):
         return None
     return None
 
+# =========================
+# ANIMASI LOTTIE
+# =========================
 LOTTIE_WELCOME = "https://assets10.lottiefiles.com/packages/lf20_pwohahvd.json"
 LOTTIE_DASHBOARD = "https://assets10.lottiefiles.com/packages/lf20_t24tpvcu.json"
 LOTTIE_TRANSITION = "https://assets2.lottiefiles.com/packages/lf20_touohxv0.json"
 
+# =========================
+# SISTEM HALAMAN
+# =========================
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
+# --- HALAMAN UTAMA ---
+
+# =========================
+# HALAMAN 1: WELCOME
+# =========================
 if st.session_state.page == "home":
     st.markdown("<h1 style='text-align:center;'>🤖 Selamat Datang di AI Vision Pro</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;'>Sistem Cerdas untuk Deteksi Objek dan Klasifikasi Gambar</p>", unsafe_allow_html=True)
     
+    # Konten Lottie
     lottie = load_lottie_url(LOTTIE_WELCOME)
     if lottie:
         st.markdown("<div class='lottie-center'>", unsafe_allow_html=True)
@@ -307,6 +283,9 @@ if st.session_state.page == "home":
                 time.sleep(1.5)
             st.rerun()
 
+# =========================
+# HALAMAN 2: DASHBOARD
+# =========================
 elif st.session_state.page == "dashboard":
     st.title("🤖 AI Vision Pro Dashboard")
     st.markdown("### Sistem Deteksi dan Klasifikasi Gambar Cerdas")
@@ -327,6 +306,7 @@ elif st.session_state.page == "dashboard":
             if "current_music" not in st.session_state:
                 st.session_state.current_music = music_files[0] if music_files else None
             
+            # Label "Pilih Lagu:" dipertahankan
             current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
             selected_music = st.sidebar.selectbox(
                 "Pilih Lagu:", 
@@ -349,6 +329,7 @@ elif st.session_state.page == "dashboard":
                 st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
             
             if audio_bytes:
+                # Pemutar audio bawaan Streamlit
                 st.sidebar.audio(
                     audio_bytes,
                     format='audio/mp3',
@@ -373,7 +354,10 @@ elif st.session_state.page == "dashboard":
     st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
+    # =========================
+
     
+    # DEFINISI NAMA KELAS KLASIFIKASI (Keras)
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
 
     @st.cache_resource
@@ -389,6 +373,7 @@ elif st.session_state.page == "dashboard":
             st.warning(f"⚠ Gagal memuat model. Pastikan file model ada di folder 'model/'. Error: {e}")
             return None, None, {}
 
+    # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
@@ -396,6 +381,7 @@ elif st.session_state.page == "dashboard":
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
+        # PERBAIKAN: Konversi eksplisit ke RGB
         try:
             if img.mode != 'RGB':
                 img = img.convert('RGB')
@@ -424,6 +410,7 @@ elif st.session_state.page == "dashboard":
                     class_id = int(box.cls[0])
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
+                    # Membersihkan nama kelas
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -433,9 +420,8 @@ elif st.session_state.page == "dashboard":
                         detection_counts[final_class_name] = 1
                 
                 summary_list = []
-                # Perbaikan: Hanya tampilkan nama objek saja, tanpa hitungan atau format Markdown yang berlebihan
                 for name, count in detection_counts.items():
-                    summary_list.append(f"- {name}") 
+                    summary_list.append(f"- **{name}** ({count} objek)") 
                 
                 summary_html = f"""
                 <div class="detection-summary">
@@ -487,6 +473,7 @@ elif st.session_state.page == "dashboard":
     else:
         st.markdown("<div class='warning-box'>📂 Silakan unggah gambar terlebih dahulu.</div>", unsafe_allow_html=True)
 
+    # 🔹 TOMBOL KEMBALI (DI DALAM SIDEBAR)
     if st.sidebar.button("⬅ Kembali ke Halaman Awal", key="back_to_home_fixed", use_container_width=True):
         st.session_state.page = "home"
         st.rerun()
