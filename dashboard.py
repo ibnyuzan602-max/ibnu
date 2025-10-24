@@ -178,6 +178,24 @@ h1, h2, h3 {
     box-shadow: 0 0 20px rgba(0, 183, 224, 0.8);
 }
 
+/* 🔥 PERUBAHAN BARU: Tombol Download Hasil Deteksi (Biru Neon) */
+[data-testid="stDownloadButton"] > button {
+    background-color: #0077b6; /* Warna latar belakang biru */
+    color: white !important;
+    border: 1px solid #00b4d8; /* Border biru neon */
+    font-size: 1.1em; 
+    font-weight: bold;
+    height: 3em; 
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.4); /* Efek neon */
+    transition: all 0.2s;
+}
+
+[data-testid="stDownloadButton"] > button:hover {
+    background-color: #0096c7;
+    box-shadow: 0 0 15px rgba(0, 183, 224, 0.6); /* Efek neon saat hover */
+}
+/* END PERUBAHAN BARU */
+
 
 /* Perubahan Seleksi Musik: Latar Belakang Gelap dan Border */
 /* FIX: Selectbox Lagu - Kotak Display */
@@ -419,10 +437,9 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[final_class_name] = 1
                 
-                # --- PERUBAHAN DI SINI: Hanya memasukkan NAMA OBJEK ke dalam list ---
+                # Hanya memasukkan NAMA OBJEK ke dalam list tanpa hitungan
                 summary_list = []
                 for name in detection_counts.keys():
-                    # Hanya menambahkan nama objek ke dalam list tanpa hitungan atau format Markdown
                     summary_list.append(f"- {name}") 
                 
                 summary_html = f"""
@@ -439,7 +456,7 @@ elif st.session_state.page == "dashboard":
             else:
                 st.info("Tidak ada objek yang terdeteksi dalam gambar ini.")
             
-            # Tombol Download
+            # Tombol Download (Sekarang akan berwarna biru neon karena CSS yang baru)
             img_bytes = io.BytesIO()
             Image.fromarray(result_img).save(img_bytes, format="PNG")
             img_bytes.seek(0)
