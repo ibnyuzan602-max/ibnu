@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # =========================
-# CSS DARK FUTURISTIK (DITAMBAH FIX KETERBACAAN TOMBOL BROWSE)
+# CSS DARK FUTURISTIK 
 # =========================
 st.markdown("""
 <style>
@@ -32,6 +32,7 @@ st.markdown("""
     background: radial-gradient(circle at 10% 20%, #0b0b17, #1b1b2a 80%);
     color: white;
 }
+/* Catatan: stSidebar hanya akan di-render saat dibutuhkan di Halaman Dashboard */
 [data-testid="stSidebar"] {
     background: rgba(15, 15, 25, 0.95);
     backdrop-filter: blur(10px);
@@ -78,13 +79,13 @@ h1, h2, h3 {
     margin: 15px auto;
 }
 
-/* FIX 1: Target label st.file_uploader (sudah diperbaiki sebelumnya) */
+/* FIX: Target label st.file_uploader */
 [data-testid="stFileUploader"] label p {
     color: #f0f0f0 !important; 
     font-size: 1.1em; 
 }
 
-/* 🔥 FIX 2: Target Tombol "Browse Files" di dalam st.file_uploader */
+/* FIX: Target Tombol "Browse Files" di dalam st.file_uploader */
 [data-testid="stFileUploader"] button {
     background-color: #334466; /* Biru tua kontras */
     color: white !important;
@@ -126,71 +127,6 @@ LOTTIE_TRANSITION = "https://assets2.lottiefiles.com/packages/lf20_touohxv0.json
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
-# =========================
-# SISTEM MUSIK (FINAL STABLE: Menggunakan st.audio() tanpa Loop Otomatis)
-# =========================
-music_folder = "music"
-
-# Ambil semua file musik mp3 di folder /music
-if os.path.exists(music_folder):
-    music_files = [f for f in os.listdir(music_folder) if f.endswith(".mp3")]
-
-    if len(music_files) == 0:
-        st.sidebar.warning("⚠ Tidak ada file musik di folder 'music/'.")
-    else:
-        st.sidebar.markdown("#### 🎧 Player Musik")
-
-        # --- INISIALISASI SESSION STATE YANG AMAN ---
-        if "current_music" not in st.session_state:
-            st.session_state.current_music = music_files[0] if music_files else None
-        # ---------------------------------------------
-        
-        # Selectbox untuk memilih lagu
-        current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
-        selected_music = st.sidebar.selectbox(
-            "Pilih Lagu:",
-            options=music_files,
-            index=current_index,
-            key="music_selector"
-        )
-        
-        # Perbarui state
-        if selected_music != st.session_state.current_music:
-            st.session_state.current_music = selected_music
-            # RERUN penting untuk me-render ulang st.audio
-            st.rerun() 
-
-        music_path = os.path.join(music_folder, st.session_state.current_music)
-
-        audio_bytes = None
-        try:
-            # Buka file audio sebagai bytes
-            with open(music_path, "rb") as f:
-                audio_bytes = f.read()
-        except FileNotFoundError:
-            st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
-        
-        # Menggunakan st.audio()
-        if audio_bytes:
-            st.sidebar.markdown(f"""
-            <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
-            """, unsafe_allow_html=True)
-            
-            # st.audio() menyediakan pemutaran yang paling stabil untuk Streamlit
-            st.sidebar.audio(
-                audio_bytes,
-                format='audio/mp3',
-            )
-            
-            # Keterangan untuk pengguna tentang fitur loop yang hilang
-            st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
-        
-else:
-    st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
-# =========================
-# AKHIR SISTEM MUSIK
-# =========================
-
 # --- HALAMAN UTAMA ---
 
 # =========================
@@ -224,19 +160,82 @@ elif st.session_state.page == "dashboard":
     st.title("🤖 AI Vision Pro Dashboard")
     st.markdown("### Sistem Deteksi dan Klasifikasi Gambar Cerdas")
 
+    # =========================
+    # SISTEM MUSIK (DIPINDAHKAN KE DALAM DASHBOARD)
+    # =========================
+    music_folder = "music"
+
+    if os.path.exists(music_folder):
+        music_files = [f for f in os.listdir(music_folder) if f.endswith(".mp3")]
+
+        if len(music_files) == 0:
+            st.sidebar.warning("⚠ Tidak ada file musik di folder 'music/'.")
+        else:
+            st.sidebar.markdown("#### 🎧 Player Musik")
+
+            # --- INISIALISASI SESSION STATE YANG AMAN ---
+            if "current_music" not in st.session_state:
+                st.session_state.current_music = music_files[0] if music_files else None
+            # ---------------------------------------------
+            
+            # Selectbox untuk memilih lagu
+            current_index = music_files.index(st.session_state.current_music) if st.session_state.current_music in music_files else 0
+            selected_music = st.sidebar.selectbox(
+                "Pilih Lagu:",
+                options=music_files,
+                index=current_index,
+                key="music_selector"
+            )
+            
+            # Perbarui state
+            if selected_music != st.session_state.current_music:
+                st.session_state.current_music = selected_music
+                st.rerun() 
+
+            music_path = os.path.join(music_folder, st.session_state.current_music)
+
+            audio_bytes = None
+            try:
+                with open(music_path, "rb") as f:
+                    audio_bytes = f.read()
+            except FileNotFoundError:
+                st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
+            
+            if audio_bytes:
+                st.sidebar.markdown(f"""
+                <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
+                """, unsafe_allow_html=True)
+                
+                st.sidebar.audio(
+                    audio_bytes,
+                    format='audio/mp3',
+                )
+                
+                st.sidebar.info("💡 **Catatan:** Untuk mengulang lagu, klik ikon loop/putar ulang pada pemutar di atas (jika tersedia di browser Anda).")
+            
+    else:
+        st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
+    # =========================
+    # AKHIR SISTEM MUSIK
+    # =========================
+
     lottie_ai = load_lottie_url(LOTTIE_DASHBOARD)
     if lottie_ai:
         st.markdown("<div class='lottie-center'>", unsafe_allow_html=True)
         st_lottie(lottie_ai, height=250, key="ai_anim")
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # =========================
+    # KONTROL MODE AI (DIPINDAHKAN KE DALAM DASHBOARD)
+    # =========================
     st.sidebar.header("🧠 Mode AI")
-    # Opsi sudah diperbarui
     mode = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
     st.sidebar.markdown("---")
     st.sidebar.info("💡 Unggah gambar, lalu biarkan AI menganalisis secara otomatis.")
     st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
+    # =========================
+
     
     # DEFINISI NAMA KELAS KLASIFIKASI (Keras)
     CLASS_NAMES = ["Kucing 🐈", "Anjing 🐕", "Manusia 👤"]
@@ -257,13 +256,11 @@ elif st.session_state.page == "dashboard":
     # Tangkap model dan nama kelas YOLO
     yolo_model, classifier, YOLO_CLASS_NAMES = load_models()
 
-    # st.file_uploader: Label dan tombolnya sekarang diatur oleh CSS di atas
     uploaded_file = st.file_uploader("📤 Unggah Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file and yolo_model and classifier:
         img = Image.open(uploaded_file)
         
-        # Perbaikan Warning Streamlit: use_container_width
         st.image(img, caption="🖼 Gambar yang Diupload", use_container_width=True)
         
         with st.spinner("🤖 AI sedang menganalisis gambar..."):
@@ -273,24 +270,17 @@ elif st.session_state.page == "dashboard":
             st.info("🚀 Menjalankan deteksi objek...")
             img_cv2 = np.array(img)
             
-            # Lakukan prediksi
             results = yolo_model.predict(source=img_cv2, verbose=False)
             
-            # Visualisasikan hasil
             result_img = results[0].plot()
-            # Perbaikan Warning Streamlit: use_container_width
             st.image(result_img, caption="🎯 Hasil Deteksi", use_container_width=True)
             
-            # MENGHITUNG DAN MENAMPILKAN RINGKASAN TEKSTUAL (SUDAH DIPERJELAS)
             detection_counts = {}
             
             if results and len(results[0].boxes) > 0:
                 for box in results[0].boxes:
                     class_id = int(box.cls[0])
-                    
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
-                    
-                    # Pembersihan nama kelas: Hapus tanda bintang/markdown/angka berlebihan
                     clean_name = raw_class_name.strip().replace('**', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
@@ -299,10 +289,8 @@ elif st.session_state.page == "dashboard":
                     else:
                         detection_counts[final_class_name] = 1
                 
-                # Membuat ringkasan HTML/Markdown dengan format sederhana
                 summary_list = []
                 for name, count in detection_counts.items():
-                    # Format yang diperjelas: [Nama Objek] ([Jumlah] objek)
                     summary_list.append(f"- {name} ({count} objek)") 
                 
                 summary_html = f"""
@@ -335,7 +323,6 @@ elif st.session_state.page == "dashboard":
             class_index = np.argmax(prediction)
             confidence = np.max(prediction)
             
-            # MENDAPATKAN NAMA KELAS DARI INDEKS
             try:
                 predicted_class_name = CLASS_NAMES[class_index]
             except IndexError:
@@ -355,7 +342,7 @@ elif st.session_state.page == "dashboard":
     else:
         st.markdown("<div class='warning-box'>📂 Silakan unggah gambar terlebih dahulu.</div>", unsafe_allow_html=True)
 
-    # 🔹 TOMBOL KEMBALI
+    # 🔹 TOMBOL KEMBALI (DI DALAM SIDEBAR)
     if st.sidebar.button("⬅ Kembali ke Halaman Awal", key="back_to_home_fixed", use_container_width=True):
         st.session_state.page = "home"
         st.rerun()
