@@ -106,7 +106,7 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # =========================
-# SISTEM MUSIK (Final Fix untuk TypeError)
+# SISTEM MUSIK (Final Fix untuk Autoplay dan Loop)
 # =========================
 music_folder = "music"
 
@@ -135,26 +135,33 @@ if os.path.exists(music_folder):
         # Perbarui state dan panggil rerun HANYA jika lagu benar-benar berubah
         if selected_music != st.session_state.current_music:
             st.session_state.current_music = selected_music
-            # Paksa seluruh aplikasi untuk memuat ulang agar st.audio me-reset pemutaran
+            # Memaksa muat ulang agar elemen <audio> baru di-render
             st.rerun() 
 
         music_path = os.path.join(music_folder, st.session_state.current_music)
 
-        audio_bytes = None
         try:
-            # Buka file audio sebagai bytes
+            # Mengubah data audio menjadi base64
             with open(music_path, "rb") as f:
-                audio_bytes = f.read()
+                audio_data = f.read()
+                audio_b64 = base64.b64encode(audio_data).decode()
         except FileNotFoundError:
             st.sidebar.error(f"File musik tidak ditemukan: {st.session_state.current_music}")
+            audio_b64 = ""
 
-        # GANTI st.markdown dengan st.audio() dan HILANGKAN KEY
-        if audio_bytes:
-            st.sidebar.audio(
-                audio_bytes,
-                format='audio/mp3',
-                # Parameter key DIHILANGKAN untuk menghindari TypeError di sidebar
-            )
+        # Menggunakan st.markdown dengan tag <audio> yang memiliki 'loop' dan 'autoplay'
+        # 'loop' memastikan lagu diputar ulang setelah selesai
+        audio_html = f"""
+        <p style="font-size: 14px; margin-top: 10px;">Sedang Memutar: <b>{st.session_state.current_music}</b></p>
+        <audio controls loop autoplay style="width:100%">
+            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+            Browser Anda tidak mendukung audio.
+        </audio>
+        """
+        st.sidebar.markdown(
+            audio_html, 
+            unsafe_allow_html=True
+        )
 
 else:
     st.sidebar.warning("⚠ Folder 'music/' tidak ditemukan.")
