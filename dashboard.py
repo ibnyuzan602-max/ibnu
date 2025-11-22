@@ -103,13 +103,6 @@ h1, h2, h3 {
     border-right: 1px solid #333;
     padding-bottom: 80px; 
 }
-
-/* 🎯 FIX UTAMA: memastikan sidebar selalu muncul */
-[data-testid="stSidebar"] {
-    min-width: 250px !important;
-}
-
-
 [data-testid="stSidebar"] * { color: white !important; }
 
 
@@ -250,16 +243,6 @@ div[role="option"][aria-selected="true"] {
     color: white !important;
     box-shadow: 0 0 10px rgba(0, 119, 182, 0.5) !important; 
     border-radius: 8px !important;
-}
-/* === FIX FINAL: Munculkan kembali tombol toggle sidebar === */
-[data-testid="stHeader"] {
-    z-index: 999999 !important;
-    position: relative !important;
-}
-[data-testid="collapsedControl"] {
-    display: flex !important;
-    z-index: 999999 !important;
-    position: relative !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -445,7 +428,7 @@ elif st.session_state.page == "dashboard":
                     raw_class_name = YOLO_CLASS_NAMES.get(class_id, "Kelas Tidak Dikenal") 
                     
                     # Membersihkan nama kelas
-                    clean_name = raw_class_name.strip().replace('**', '')
+                    clean_name = raw_class_name.strip().replace('', '')
                     final_class_name = re.sub(r'[^\w\s]+$', '', clean_name).strip()
                     
                     if final_class_name in detection_counts:
@@ -454,7 +437,7 @@ elif st.session_state.page == "dashboard":
                         detection_counts[final_class_name] = 1
                 
                 # Membangun daftar ringkasan dalam format HTML (ul/li)
-                summary_list_html = "".join([f"<li>*{name}* ({count} objek)</li>" for name, count in detection_counts.items()])
+                summary_list_html = "".join([f"<li>{name} ({count} objek)</li>" for name, count in detection_counts.items()])
                 
                 summary_html = f"""
                 <div class="detection-summary">
