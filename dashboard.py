@@ -98,12 +98,18 @@ h1, h2, h3 {
 
 
 [data-testid="stSidebar"] {
-    min-width: 250px !important;
     background: rgba(15, 15, 25, 0.95);
     backdrop-filter: blur(10px);
     border-right: 1px solid #333;
     padding-bottom: 80px; 
 }
+
+/* 🎯 FIX UTAMA: memastikan sidebar selalu muncul */
+[data-testid="stSidebar"] {
+    min-width: 250px !important;
+}
+
+
 [data-testid="stSidebar"] * { color: white !important; }
 
 
