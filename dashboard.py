@@ -251,6 +251,16 @@ div[role="option"][aria-selected="true"] {
     box-shadow: 0 0 10px rgba(0, 119, 182, 0.5) !important; 
     border-radius: 8px !important;
 }
+/* === FIX FINAL: Munculkan kembali tombol toggle sidebar === */
+[data-testid="stHeader"] {
+    z-index: 999999 !important;
+    position: relative !important;
+}
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    z-index: 999999 !important;
+    position: relative !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
